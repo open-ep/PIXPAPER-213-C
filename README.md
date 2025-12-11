@@ -2,7 +2,7 @@
 
  ### Open-EP introduces PIXPAPER-213-C
 A 2.13 inch prototype 4-color Electronic Paper Display (EPD) module, in collaboration with Triangle Alien Studio for the first time, showcasing craftsmanship and excellent hardware quality.<br>
-It is based on an SPI interface and is fully compatible with our NXP edge fanless AIoT computing solutions.<br>
+It is based on an SPI interface and is fully compatible with world-wide famous embedded devices.<br>
 We will gradually port it to more embedded platforms, so this page will be updated periodically!
 
 ----------------------
@@ -29,23 +29,23 @@ We will gradually port it to more embedded platforms, so this page will be updat
 
 ----------------------
 
-#### MPU Supported Platforms (ARM64)
+### MPU Supported Platforms (ARM64)
 
 | **Platform** | <a href="https://www.renesas.com/" target="_blank"><br> <img src="https://www.macnica.com/apac/galaxy/zh_tw/products-support/products/renesas.coreimg.jpeg/structure/_jcr_content/root/container/container/bannerimage/1653236359047.jpeg" width="" height="100" /></a> | Status |<a href="https://www.nxp.com/" target="_blank"><br> <img src="https://github.com/TechNexion-Vision/.github/assets/28101204/67cc61c0-6bb7-44d5-889a-1ba5d4c0b9b5" width="" height="80" /></a> | Status | <a href="https://www.telechips.com/" target="_blank"><img width="" height="90" alt="image" src="https://github.com/user-attachments/assets/4f260b12-4d99-42e3-b9bd-6b90b2bbec16" /> | Status |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| **Porting Guide** | [KAKIP SBC(RZ/V2H)](https://github.com/open-ep/PIXPAPER-213/blob/main/KAKIP_PIXPAPAER-213-C.md) | &#10004;  |  [PANZER-PLUS(IMX8MP)](https://github.com/open-ep/PIXPAPER-213-C/blob/main/PANZER-PLUS_PIXPAPAER-213-C.md) <br> [FRDM-IMX93(IMX93)](https://github.com/open-ep/PIXPAPER-213/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | &#10004; <br> &#10004;| [TOPST D3-G(Dolphin 3M)](https://github.com/open-ep/PIXPAPER-213/blob/main/D3G_PIXPAPAER-213-C.md) | &#10004; |
+| **Porting Guide** | [KAKIP SBC(RZ/V2H)](https://github.com/open-ep/PIXPAPER-213-C/blob/main/KAKIP_PIXPAPAER-213-C.md) | &#10004;  |  [PANZER-PLUS(IMX8MP)](https://github.com/open-ep/PIXPAPER-213-C/blob/main/PANZER-PLUS_PIXPAPAER-213-C.md) <br> [FRDM-IMX93(IMX93)](https://github.com/open-ep/PIXPAPER-213/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | &#10004; <br> &#10004;| [TOPST D3-G(Dolphin 3M)](https://github.com/open-ep/PIXPAPER-213/blob/main/D3G_PIXPAPAER-213-C.md) | &#10004; |
 
 | **Platform** | <a href="https://www.rockchip.com/" target="_blank"><br> <img src="https://github.com/user-attachments/assets/6c51be9a-8cc4-4077-b67d-f1f72890f623" width="200" height="100" /></a> | Status |
 | ---- | ---- | ---- |
 | **Porting Guide** | [CUBE-RK3588(RK3588)](https://github.com/open-ep/PIXPAPER-213/blob/main/CUBE-RK3588_PIXPAPAER-213-C.md) | &#10004;  |
 
-#### MPU Supported Platforms (ARM32)
+### MPU Supported Platforms (ARM32)
 
 | **Platform** | <a href="https://www.raspberrypi.com/" target="_blank"><br> <img src="https://camo.githubusercontent.com/fc8b5f8e2e02a0e81be9f9ae53bdf674c2a730f55345c6df533ed0e319804095/68747470733a2f2f7777772e72617370626572727970692e636f6d2f6170702f75706c6f6164732f323032322f30322f434f4c4f55522d5261737062657272792d50692d53796d626f6c2d526567697374657265642e706e67" width="" height="120" /></a> | Status |
 | ---- | ---- | ---- |
 | **Porting Guide** | [Raspberry PI 2 Model B](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI2_PIXPAPAER-213-C.md)| &#10004;  |
 
-#### MCU Supported Platforms (ARM32)
+### MCU Supported Platforms (ARM32)
 
 | **Platform** | <a href="https://www.raspberrypi.com/" target="_blank"><br> <img src="https://camo.githubusercontent.com/fc8b5f8e2e02a0e81be9f9ae53bdf674c2a730f55345c6df533ed0e319804095/68747470733a2f2f7777772e72617370626572727970692e636f6d2f6170702f75706c6f6164732f323032322f30322f434f4c4f55522d5261737062657272792d50692d53796d626f6c2d526567697374657265642e706e67" width="" height="120" /></a> | Status | <a href="https://www.nxp.com/" target="_blank"><br> <img src="https://github.com/TechNexion-Vision/.github/assets/28101204/67cc61c0-6bb7-44d5-889a-1ba5d4c0b9b5" width="" height="80" /></a> | Status |
 | ---- | ---- | ---- | ---- | ---- |
