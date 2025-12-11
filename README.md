@@ -1,3 +1,4 @@
+<img src="https://github.com/user-attachments/assets/47d51a3d-a075-440f-b9df-2e13a8659e65" width="100" align="right">
 
  ### Open-EP introduces PIXPAPER-213-C
 A 2.13 inch prototype 4-color Electronic Paper Display (EPD) module, in collaboration with Triangle Alien Studio for the first time, showcasing craftsmanship and excellent hardware quality.<br>
