@@ -1,6 +1,3 @@
-![image](https://github.com/user-attachments/assets/c2cb952e-7385-4665-9877-0b3269abaa0c)
-
-
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
 ## Overview
@@ -96,7 +93,7 @@ Step 2. Prepare a 250x122 size picture what you want to showing, then make a ima
 
         Download the PNG to RAW converter base on python3, remember to install opencv package first
         $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
+        $ wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
 
         Then, rename your PNG file as test.png, and excute the python script
         $ python3 png2epd.py
@@ -106,13 +103,13 @@ Step 2. Prepare a 250x122 size picture what you want to showing, then make a ima
         compiling.
 
         Download a sample header file:
-        $ wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
+        $ wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
 
 
 Step 3. Please download the utility source code in the rootfs of KAKIP SBC, then compile it and execute the compiled executable file.
 
         PIXPAPER-213-C:
-        # wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-kakip.c
+        # wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-kakip.c
         # gcc -o epd_test pixpaper-213-c-test-kakip.c -lgpiod
         # ./epd_test
 
@@ -143,7 +140,7 @@ Thanks goes to these wonderful people from open source community:
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lc-wang"><img src="https://avatars.githubusercontent.com/u/125327848?v=4" width="100px;" alt="LC Wang"/><br /><sub><b>LC Wang</b></sub></a><br /><a href="https://github.com/wigcheng/open-epd/commits?author=lc-wang" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lc-wang"><img src="https://avatars.githubusercontent.com/u/125327848?v=4" width="100px;" alt="LC Wang"/><br /><sub><b>LC Wang</b></sub></a><br /><a href="https://github.com/wigcheng/open-ep/commits?author=lc-wang" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
