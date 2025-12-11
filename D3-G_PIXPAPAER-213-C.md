@@ -49,7 +49,7 @@ Step 2. Prepare a 250x122 size picture what you want to showing, then make a ima
 
         Download the PNG to RAW converter base on python3, remember to install opencv package first
         $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
+        $ wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
 
         Then, rename your PNG file as test.png, and excute the python script
         $ python3 png2epd.py
@@ -59,13 +59,13 @@ Step 2. Prepare a 250x122 size picture what you want to showing, then make a ima
         compiling.
 
         Download a sample header file:
-        wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
+        wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
 
 
 Step 3. Please download the utility source code in the rootfs of D3-G SBC, then compile it and execute the compiled executable file.
 
         PIXPAPER-213-C:
-        # wget https://raw.githubusercontent.com/open-EPD/user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-d3-g.c
+        # wget https://raw.githubusercontent.com/open-ep/user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-d3-g.c
         # gcc -o epd_test pixpaper-213-c-test-d3-g.c -lgpiod
         # ./epd_test
 
@@ -97,7 +97,7 @@ Thanks goes to these wonderful people from open source community:
 <table>
   <tbody>
     <tr>
-        <td align="center" valign="top" width="14.28%"><a href="https://github.com/wigcheng"><img src="https://avatars.githubusercontent.com/u/7148592?v=4" width="100px;" alt="Wig Cheng"/><br /><sub><b>Wig Cheng</b></sub></a><br /><a href="https://github.com/wigcheng/open-epd/commits?author=wigcheng" title="Code">💻</a></td>
+        <td align="center" valign="top" width="14.28%"><a href="https://github.com/wigcheng"><img src="https://avatars.githubusercontent.com/u/7148592?v=4" width="100px;" alt="Wig Cheng"/><br /><sub><b>Wig Cheng</b></sub></a><br /><a href="https://github.com/wigcheng/open-ep/commits?author=wigcheng" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
