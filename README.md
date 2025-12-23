@@ -169,17 +169,17 @@ User-space drivers provide direct application control without kernel modificatio
 
 <table>
 <tr>
-<td align="center" width="50%">
+<td align="center" width="25%">
 
 <a href="https://www.raspberrypi.com/" target="_blank">
-<img src="https://camo.githubusercontent.com/fc8b5f8e2e02a0e81be9f9ae53bdf674c2a730f55345c6df533ed0e319804095/68747470733a2f2f7777772e72617370626572727970692e636f6d2f6170702f75706c6f6164732f323032322f30322f434f4c4f55522d5261737062657272792d50692d53796d626f6c2d526567697374657265642e706e67" height="100">
+<img src="https://camo.githubusercontent.com/fc8b5f8e2e02a0e81be9f9ae53bdf674c2a730f55345c6df533ed0e319804095/68747470733a2f2f7777772e72617370626572727970692e636f6d2f6170702f75706c6f6164732f323032322f30322f434f4c4f55522d5261737062657272792d50692d53796d626f6c2d526567697374657265642e706e67" height="80">
 </a>
 
 #### Raspberry Pi
 **Status:** ✅ Ready
 
 </td>
-<td align="center" width="50%">
+<td align="center" width="25%">
 
 <a href="https://www.nxp.com/" target="_blank">
 <img src="https://github.com/TechNexion-Vision/.github/assets/28101204/67cc61c0-6bb7-44d5-889a-1ba5d4c0b9b5" height="80">
@@ -189,13 +189,35 @@ User-space drivers provide direct application control without kernel modificatio
 **Status:** ✅ Ready
 
 </td>
+<td align="center" width="25%">
+
+<a href="https://www.st.com/" target="_blank">
+<img src="https://github.com/user-attachments/assets/512fc35f-6a9a-471c-bd2b-2d77ac4b4e0a" height="80">
+</a>
+
+#### ST
+**Status:** ✅ Ready
+
+</td>
+<td align="center" width="25%">
+
+<a href="https://www.nordicsemi.com/" target="_blank">
+<img src="https://github.com/user-attachments/assets/f0ef4395-25c8-4281-8b71-2d9e60a7e4a8" height="80">
+</a>
+
+#### Nordic
+**Status:** ✅ Ready
+
+</td>
 </tr>
 </table>
 
 | Manufacturer | Board / Core | Porting Guide | Status |
 |:------------|:------------|:--------------|:------:|
-| **Raspberry Pi** | Raspberry Pi Pico | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
+| **Raspberry Pi** | Raspberry Pi Pico (M0+) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
 | **NXP** | FRDM-IMX93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
+| **ST** | STM32 | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/STM32_PIXPAPAER-213-C.md) | ✅ |
+| **Nordic** | nRF | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/NRF_PIXPAPAER-213-C.md) | ✅ |
 
 ---
 
