@@ -357,7 +357,7 @@ Have a unique application in mind? We'd love to collaborate!
 
 - **Technical Issues:** [Open an Issue](https://github.com/open-ep/PIXPAPER-213-C/issues)
 - **Feature Requests:** [Start a Discussion](https://github.com/open-ep/PIXPAPER-213-C/discussions)
-- **Commercial Inquiries:** contact@open-ep.io
+- **Commercial Inquiries:** support@open-ep.org
 
 ---
 
