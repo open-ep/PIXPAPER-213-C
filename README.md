@@ -140,7 +140,7 @@ User-space drivers provide direct application control without kernel modificatio
 |:------------|:-----------|:--------------|:------:|
 | **Renesas** | KAKIP SBC (RZ/V2H) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/KAKIP_PIXPAPAER-213-C.md) | ✅ |
 | **NXP** | PANZER-PLUS (IMX8MP) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/PANZER-PLUS_PIXPAPAER-213-C.md) | ✅ |
-| **NXP** | FRDM-IMX93 (IMX93) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | ✅ |
+| **NXP** | PANZER-LITE93 (IMX93) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | ✅ |
 | **Telechips** | TOPST D3-G (Dolphin 3M) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/D3-G_PIXPAPAER-213-C.md) | ✅ |
 | **Rockchip** | CUBE-RK3588 (RK3588) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/CUBE-RK3588_PIXPAPAER-213-C.md) | ✅ |
 
@@ -215,7 +215,7 @@ User-space drivers provide direct application control without kernel modificatio
 | Manufacturer | Board / Core | Porting Guide | Status |
 |:------------|:------------|:--------------|:------:|
 | **Raspberry Pi** | Raspberry Pi Pico (M0+) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
-| **NXP** | FRDM-IMX93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
+| **NXP** | PANZER-LITE93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
 | **ST** | STM32 | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/STM32_PIXPAPAER-213-C.md) | ✅ |
 | **Nordic** | nRF | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/NRF_PIXPAPAER-213-C.md) | ✅ |
 
@@ -254,27 +254,15 @@ Kernel-space reliability with proper error handling
 
 ### 📋 Platform Support Status
 
-| Platform | Architecture | DRM Driver Status | Mainline Kernel |
-|:---------|:------------|:-----------------|:----------------|
-| **i.MX8M Plus** | ARM64 | 🚧 In Development | Planned for v6.8 |
-| **RZ/V2H** | ARM64 | 🚧 In Development | Under Review |
-| **RK3588** | ARM64 | 📝 Planned | TBD |
-| **Raspberry Pi 4** | ARM64 | 📝 Planned | TBD |
+| Platform | Board | Architecture | DRM Driver Status | Kernel type |
+|:---------|:------------|:------------|:-----------------|:----------------|
+| **IMX95** | LEC-IMX95 | ARM64 | 📝 Planned | Vendor Kernel 6.12↑ |
+| **IMX93** | PANZER-LITE93 | ARM64 | ✅ Ready,[📄 Guide]() | Vendor Kernel 6.12↑ |
+| **RZ/V2H** | KAKIP | ARM64 | ✅ Ready, [📄 Guide]() | Vendor Kernel 5.10 |
+| **RK3588** | CUBE-RK3588 | ARM64 | 📝 Planned | TBD |
+| **Raspberry Pi** | PI 2 | ARM32 | ✅ Ready,[📄 Guide]() | Mainline Kernel 6.18↑ |
 
 > **Note:** DRM drivers are currently under active development. Contact us for early access programs.
-
-### 🔗 Integration Examples
-
-```bash
-# Check DRM device
-ls -l /dev/dri/
-
-# Display information
-modetest -M pixpaper
-
-# Framebuffer access
-cat /dev/fb0 > /dev/null
-```
 
 ---
 
