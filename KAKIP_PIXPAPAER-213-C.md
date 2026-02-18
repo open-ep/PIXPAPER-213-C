@@ -121,8 +121,7 @@ Step 3. Please download the utility source code in the rootfs of KAKIP SBC, then
 
 Expection results: <br>
 
-<img width="546" height="416" alt="image" src="https://github.com/user-attachments/assets/a396aae3-2a74-480b-8da2-40410c4f5022" />
-
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/32832c9d-c8e2-4eba-95f6-41340401a2ae" />
 
 
 ## Contributors
