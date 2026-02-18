@@ -15,10 +15,8 @@ Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we'v
 
 Then, connect to the FRDM-IMX93 specific PINs of 40-PIN header as follows:
 
-<img src="https://github.com/user-attachments/assets/af0d0f76-5212-4ceb-ab12-6904166d30d0" width="600"> <br>
-<img src="https://github.com/user-attachments/assets/deae640f-062d-47e9-8889-c7c233c8f22b" width="400">
-
-
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/41bc9647-8dd5-44ff-908a-f1795a9b5108" /><br>
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/06c46f0c-9ead-47b3-beaa-e5750426f513" />
 
 
 ## Firmware Installation instructions
