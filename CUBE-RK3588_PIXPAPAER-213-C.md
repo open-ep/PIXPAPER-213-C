@@ -6,14 +6,10 @@
 
 Based on the [CUBE-RK3588](https://github.com/MayQueenTechCommunity/CUBE-RK3588) hardware design, SPI interface support was not originally included. However, you have a option to use the SPI interface from UART interfaces on CUBE-RK3588: <br>
 
-
-
-![image](https://github.com/user-attachments/assets/af657fcd-c5c5-4a54-b7a7-40c95f902b9c)
-![image](https://github.com/user-attachments/assets/6ae059a1-9711-4d93-b800-46bffb24d128)
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
 
 The CUBE-RK3588 SPI can be connected as follows COM1 & COM2 mapping:
-<img width="536" height="401" alt="image" src="https://github.com/user-attachments/assets/b55fde25-bec6-4431-8a2b-a6f5b1d2e876" />
-
+<img width="536" height="401" alt="image" src="https://github.com/user-attachments/assets/0b979c3f-dc40-4ad3-9fe2-24afd07a2368" />
 
 
 ## Driver Installation instructions
