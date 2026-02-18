@@ -8,7 +8,7 @@ Because [FRDM-IMX93 - Single Board Computer](https://youtu.be/ZpD9j6_nsNI?si=w4P
 
 Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/e91b0785-4cf3-4493-a628-4615d0fd2921" />
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
 
 Then, connect to the FRDM-IMX93 specific PINs of 40-PIN header as follows:
 
