@@ -16,8 +16,7 @@ Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we'v
 
 
 Then, connect to the Raspberry PI specific PINs of 40-PIN header as follows:
-
-<img src="https://github.com/user-attachments/assets/ce656f6a-ffba-4527-9b6d-3d91c273efab" width="600">
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/e5918ec0-b46e-4a1f-95e9-53da998e52f0" />
 
 
 
@@ -28,6 +27,7 @@ Issue "rasp-config" command into the control GUI and following steps as below:
 
 Step 1. Selecting **Interface Options** <br>
 <img src="https://github.com/user-attachments/assets/d242c478-c80f-4116-a3be-533e62bdff6e" width="600">
+
 
 Step 2. Selecting **SPI** to enable SPI interface <br>
 <img src="https://github.com/user-attachments/assets/279ddd9a-19af-45fa-b4b5-6868f032f51e" width="600">
