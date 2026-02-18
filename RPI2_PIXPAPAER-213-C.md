@@ -26,17 +26,16 @@ Raspberry PI OS can dynamic enable/disable SPI interface, no need tweak kernel s
 Issue "rasp-config" command into the control GUI and following steps as below:
 
 Step 1. Selecting **Interface Options** <br>
-<img src="https://github.com/user-attachments/assets/d242c478-c80f-4116-a3be-533e62bdff6e" width="600">
-
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/d129666a-a945-4662-bb39-67629a0bf9f4" />
 
 Step 2. Selecting **SPI** to enable SPI interface <br>
-<img src="https://github.com/user-attachments/assets/279ddd9a-19af-45fa-b4b5-6868f032f51e" width="600">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/8dfb5ce3-cb5b-4ae9-b4e2-10a0cda5a5bd" />
 
 Step 3. Selecting **YES** to make sure your change <br>
-<img src="https://github.com/user-attachments/assets/e0346610-70bf-4006-910a-47ebcc9e3ebd" width="600">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/ab50b6ee-20a9-407c-940a-522bf97c3a4a" />
 
 Step 4. It will showing the SPI enabled message, just select OK to close the  <br>
-<img src="https://github.com/user-attachments/assets/385f301e-6fbf-46ab-8047-6f0f7dc27b11" width="600">
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/07d52120-d5ab-4548-bf98-a2ddc9263794" />
 
 Step 5. Reboot the device and check spi device node is existed or not.
 
@@ -86,11 +85,7 @@ Step 3. Please download the utility source code in the rootfs of Raspberry PI, t
 
 
 Expection results: <br>
-
-
-
-https://github.com/user-attachments/assets/74c95cc5-198a-4232-bba2-9cb9438a09a2
-
+https://github.com/user-attachments/assets/9a45a8c4-d8d0-4d60-a007-33870f8bfbd4
 
 ## Contributors
 
