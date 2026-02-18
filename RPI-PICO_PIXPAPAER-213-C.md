@@ -14,8 +14,7 @@ Because [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-
 
 Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-![image](https://github.com/user-attachments/assets/af657fcd-c5c5-4a54-b7a7-40c95f902b9c)
-![image](https://github.com/user-attachments/assets/6ae059a1-9711-4d93-b800-46bffb24d128)
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
 
 Then, connect to the Raspberry Pi Pico 2 specific PINs of PIN header as follows:
 
