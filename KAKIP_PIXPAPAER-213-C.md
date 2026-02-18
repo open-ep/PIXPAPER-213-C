@@ -12,10 +12,8 @@ Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we'v
 
 Then, connect to the Kakip specific PINs of 40-PIN header as follows:
 
-<img src="https://github.com/user-attachments/assets/6362c17b-1d5d-4137-93dd-5e0041440099" width="400"> <br>
-<img src="https://github.com/user-attachments/assets/98380f8c-72f4-44fb-a657-1628215f39a5" width="400">
-
-
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/ce62169e-d735-4844-bd55-967721785646" />
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/051eab7c-4836-4256-8eaf-bb09fbef7d93" />
 
 
 ## Driver Installation instructions
@@ -123,10 +121,8 @@ Step 3. Please download the utility source code in the rootfs of KAKIP SBC, then
 
 Expection results: <br>
 
+<img width="546" height="416" alt="image" src="https://github.com/user-attachments/assets/a396aae3-2a74-480b-8da2-40410c4f5022" />
 
-
-
-https://github.com/user-attachments/assets/33c27ed3-f82c-435f-919b-019f91ef661a
 
 
 ## Contributors
