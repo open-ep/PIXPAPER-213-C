@@ -14,8 +14,8 @@ Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we'v
 
 Then, connect to the D3-G specific PINs of 40-PIN header as follows:
 
-<img src="https://github.com/user-attachments/assets/d401dc80-7faa-4536-b914-a8caaaaeff19" width="800"> <br>
-<img src="https://github.com/user-attachments/assets/cfbe02b8-f010-4449-88ae-38e6ea221e81" width="400"> <br>
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/e91b0785-4cf3-4493-a628-4615d0fd2921" />
+
 
 
 
@@ -78,10 +78,7 @@ Step 3. Please download the utility source code in the rootfs of D3-G SBC, then 
 
 
 Expection results: <br>
-
-https://github.com/user-attachments/assets/a4ace9cb-fdb2-4bd9-bf6c-75e449d09f82
-
-
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/077bdc14-cc0d-4929-ad2e-25ac4021d95b" />
 
 
 
