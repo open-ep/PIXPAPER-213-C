@@ -96,8 +96,7 @@ Step 3. Starting the remoteproce, load assigned firmware on M33 core
 Expection results: <br>
 
 
-
-https://github.com/user-attachments/assets/69581ec8-6681-477a-bca2-5b8315e38604
+https://github.com/user-attachments/assets/8735993e-a415-4dd4-976f-4e2e4e37c123
 
 
 
