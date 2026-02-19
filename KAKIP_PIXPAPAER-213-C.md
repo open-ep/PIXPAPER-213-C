@@ -8,7 +8,7 @@ Because [Kakip AI-Single Board Computer](https://www.kakip.ai/) has a 40-PIN pin
 
 Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
 
 Then, connect to the Kakip specific PINs of 40-PIN header as follows:
 
