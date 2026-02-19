@@ -51,7 +51,8 @@ Ubuntu Host PC (20.04 or above):
 
 Ubuntu 24.04 on Cortex-A55 (NEW):
 
-![image](https://github.com/user-attachments/assets/6c15672a-58ef-4915-bffd-0efb9e5599c5)
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/0a725e9b-2dbe-422d-bed6-e067d76383a5" />
+
 
 
     Step 1. Package pre-installation
