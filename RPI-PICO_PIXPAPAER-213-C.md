@@ -14,7 +14,8 @@ Because [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-
 
 Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
+
 
 Then, connect to the Raspberry Pi Pico 2 specific PINs of PIN header as follows:
 
@@ -59,12 +60,7 @@ Step 3. Pressing compile and deploy button to flash the firmware to Pico, then i
 
 Expection results: <br>
 
-
-
-https://github.com/user-attachments/assets/ef027c6a-ef98-40ca-92b4-272fc4898f1f
-
-
-
+https://github.com/user-attachments/assets/ced76960-1656-456d-a9b5-52f5efae2fb5
 
 ## Contributors
 
