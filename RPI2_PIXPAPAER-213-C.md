@@ -12,8 +12,7 @@ Note that our Raspberry Pi OS is based on the November 2024 release.
 
 Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
-
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
 
 Then, connect to the Raspberry PI specific PINs of 40-PIN header as follows:
 <img width="640" alt="image" src="https://github.com/user-attachments/assets/e5918ec0-b46e-4a1f-95e9-53da998e52f0" />
