@@ -18,7 +18,7 @@ Based on the PANZER-PLUS hardware design, SPI interface support was not original
 
 Next, connect the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/ea3be651-8ead-41e8-b231-a1b31caad93e" />
+<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
 
 The PANZER-PLUS PCBA can be connected as follows JP2 & JP3 mapping:
 
