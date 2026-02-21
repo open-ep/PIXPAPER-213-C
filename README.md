@@ -200,16 +200,6 @@ User-space drivers provide direct application control without kernel modificatio
 **Status:** ✅ Ready
 
 </td>
-<td align="center" width="25%">
-
-<a href="https://www.nordicsemi.com/" target="_blank">
-<img src="https://github.com/user-attachments/assets/f0ef4395-25c8-4281-8b71-2d9e60a7e4a8" height="80">
-</a>
-
-#### Nordic
-**Status:** ✅ Ready
-
-</td>
 </tr>
 </table>
 
@@ -218,7 +208,6 @@ User-space drivers provide direct application control without kernel modificatio
 | **Raspberry Pi** | Raspberry Pi Pico (M0+) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
 | **NXP** | PANZER-LITE93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
 | **ST** | STM32 | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/STM32_PIXPAPAER-213-C.md) | ✅ |
-| **Nordic** | nRF | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/NRF_PIXPAPAER-213-C.md) | ✅ |
 
 ---
 
