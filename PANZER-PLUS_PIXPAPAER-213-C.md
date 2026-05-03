@@ -22,7 +22,8 @@ The PANZER-PLUS PCBA can be connected as follows JP2 & JP3 mapping:
 
 JP2
 
-![image](https://github.com/user-attachments/assets/c8c17f15-2931-46ce-b59c-35a7c2ab32fb)
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/71635dcf-4b94-4d5e-baf8-407a651f8522" />
+
 
 
 JP3 (EXT_GPIO8=DC#, EXT_GPIO6=RST#, EXT_GPIO4=BUSY)
