@@ -27,8 +27,7 @@ JP2
 
 JP3 (EXT_GPIO8=DC#, EXT_GPIO6=RST#, EXT_GPIO4=BUSY)
 
-![image](https://github.com/user-attachments/assets/85ae632d-a87e-4bb6-906d-dba9d6b1c32b)
-
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/f09e56f8-b345-4170-80c7-c78225073435" />
 
 ## Driver Installation instructions
 
