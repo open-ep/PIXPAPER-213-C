@@ -33,7 +33,7 @@ Ubuntu Host PC (20.04 or above):
     $ sudo apt install cmake git
 
     Step 2. Download the source code
-    $ git clone https://github.com/open-EPD/frdm-imx93_m33.git
+    $ git clone https://github.com/open-ep/frdm-imx93_m33.git
 
     Step 3. Download the toolchain
     filename: arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz
@@ -59,7 +59,7 @@ Ubuntu 24.04 on Cortex-A55 (NEW):
     $ sudo apt install cmake
 
     Step 2. Download the source code
-    $ git clone https://github.com/open-EPD/frdm-imx93_m33.git
+    $ git clone https://github.com/open-ep/frdm-imx93_m33.git
 
     Step 3. Download the toolchain
     filename: arm-gnu-toolchain-12.2.mpacbti-rel1-aarch64-arm-none-eabi.tar.xz
