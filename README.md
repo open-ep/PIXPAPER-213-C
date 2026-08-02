@@ -208,6 +208,7 @@ User-space drivers provide direct application control without kernel modificatio
 | **Raspberry Pi** | Raspberry Pi Pico (M0+) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
 | **NXP** | PANZER-LITE93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
 | **ST** | STM32 | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/STM32_PIXPAPAER-213-C.md) | ✅ |
+| **UIAP** | UIAPduino Pro Micro CH32V003 (RISC-V) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/UIAP-CH32V003_PIXPAPAER-213-C.md) | ✅ |
 
 ---
 
