@@ -193,9 +193,10 @@ User-space drivers provide direct application control without kernel modificatio
 <td align="center" width="25%">
 
 <a href="https://www.wiznet.io/" target="_blank">
+<img src="https://avatars.githubusercontent.com/u/1920751?s=200" height="80">
+</a>
 
 #### WIZnet
-</a>
 **Status:** ✅ Ready
 
 </td>
