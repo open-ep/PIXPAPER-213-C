@@ -166,7 +166,7 @@ User-space drivers provide direct application control without kernel modificatio
 |:------------|:------|:--------------|:------:|
 | **Raspberry Pi** | Raspberry Pi 2 Model B | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI2_PIXPAPAER-213-C.md) | ✅ |
 
-### 🔧 MCU Platforms (ARM32)
+### 🔧 MCU / RTOS Platforms
 
 <table>
 <tr>
@@ -192,23 +192,22 @@ User-space drivers provide direct application control without kernel modificatio
 </td>
 <td align="center" width="25%">
 
-<a href="https://www.st.com/" target="_blank">
-<img src="https://github.com/user-attachments/assets/512fc35f-6a9a-471c-bd2b-2d77ac4b4e0a" height="80">
-</a>
+<a href="https://www.wiznet.io/" target="_blank">
 
-#### ST
+#### WIZnet
+</a>
 **Status:** ✅ Ready
 
 </td>
 </tr>
 </table>
 
-| Manufacturer | Board / Core | Porting Guide | Status |
-|:------------|:------------|:--------------|:------:|
-| **Raspberry Pi** | Raspberry Pi Pico (M0+) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
-| **NXP** | PANZER-LITE93 (M33 Core) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
-| **ST** | STM32 | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/STM32_PIXPAPAER-213-C.md) | ✅ |
-| **UIAP** | UIAPduino Pro Micro CH32V003 (RISC-V) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/UIAP-CH32V003_PIXPAPAER-213-C.md) | ✅ |
+| Manufacturer | Board / Core | Runtime | Porting Guide | Status |
+|:------------|:------------|:--------|:--------------|:------:|
+| **Raspberry Pi** | Raspberry Pi Pico / Pico 2 | Arduino | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
+| **NXP** | PANZER-LITE93 (M33 Core) | FreeRTOS | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
+| **UIAP** | UIAPduino Pro Micro CH32V003 (RISC-V) | Arduino | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/UIAP-CH32V003_PIXPAPAER-213-C.md) · [💻 Sketches](https://github.com/open-ep/arduino-user-space-examples/tree/main/uiap/pixpaper-213-c) | ✅ |
+| **WIZnet** | W6300-EVB-Pico2 / Raspberry Pi Pico 2 (RP2350) | Zephyr | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/ZEPHYR-W6300-EVB-PICO2_PIXPAPAER-213-C.md) | ✅ |
 
 ---
 
@@ -348,6 +347,6 @@ Have a unique application in mind? We'd love to collaborate!
 
 Made with ❤️ for the Embedded Community
 
-**[Documentation](https://github.com/open-ep/PIXPAPER-213-C/wiki)** • **[Examples](https://github.com/open-ep/PIXPAPER-213-C/tree/main/examples)** • **[Changelog](https://github.com/open-ep/PIXPAPER-213-C/blob/main/CHANGELOG.md)**
+**[Documentation](https://github.com/open-ep/PIXPAPER-213-C/wiki)** • **[Examples](https://github.com/open-ep/linux-user-space-examples/tree/master/2.13/color)**
 
 </div>
