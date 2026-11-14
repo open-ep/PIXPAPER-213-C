@@ -48,6 +48,12 @@
 ```
 > **Note:** DC#, RST#, and BUSY are GPIO-controlled
 
+**Same on every board:**
+- Power the panel from **3.3 V only**. Never connect it to 5 V.
+- A refresh flashes for **15–25 s**. This is normal for a 4-colour panel and is not a hang.
+- **BUSY** idles HIGH and goes LOW while the panel is busy.
+- Each guide has a wiring diagram showing both the header pin number and the SoC signal name.
+
 ---
 
 ## 📚 Implementation Guide
@@ -140,7 +146,7 @@ User-space drivers provide direct application control without kernel modificatio
 |:------------|:-----------|:--------------|:------:|
 | **Renesas** | KAKIP SBC (RZ/V2H) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/KAKIP_PIXPAPAER-213-C.md) | ✅ |
 | **NXP** | PANZER-PLUS (IMX8MP) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/PANZER-PLUS_PIXPAPAER-213-C.md) | ✅ |
-| **NXP** | PANZER-LITE93 (IMX93) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | ✅ |
+| **NXP** | FRDM-IMX93 (IMX93) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93_PIXPAPAER-213-C.md) | ✅ |
 | **Telechips** | TOPST D3-G (Dolphin 3M) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/D3-G_PIXPAPAER-213-C.md) | ✅ |
 | **Rockchip** | CUBE-RK3588 (RK3588) | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/CUBE-RK3588_PIXPAPAER-213-C.md) | ✅ |
 
@@ -206,7 +212,7 @@ User-space drivers provide direct application control without kernel modificatio
 | Manufacturer | Board / Core | Runtime | Porting Guide | Status |
 |:------------|:------------|:--------|:--------------|:------:|
 | **Raspberry Pi** | Raspberry Pi Pico / Pico 2 | Arduino | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/RPI-PICO_PIXPAPAER-213-C.md) | ✅ |
-| **NXP** | PANZER-LITE93 (M33 Core) | FreeRTOS | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
+| **NXP** | FRDM-IMX93 (M33 Core) | FreeRTOS | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/FRDM-IMX93-M33_PIXPAPAER-213-C.md) | ✅ |
 | **UIAP** | UIAPduino Pro Micro CH32V003 (RISC-V) | Arduino | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/UIAP-CH32V003_PIXPAPAER-213-C.md) · [💻 Sketches](https://github.com/open-ep/arduino-user-space-examples/tree/main/uiap/pixpaper-213-c) | ✅ |
 | **WIZnet** | W6300-EVB-Pico2 / Raspberry Pi Pico 2 (RP2350) | Zephyr | [📄 Guide](https://github.com/open-ep/PIXPAPER-213-C/blob/main/ZEPHYR-W6300-EVB-PICO2_PIXPAPAER-213-C.md) | ✅ |
 
@@ -248,7 +254,7 @@ Kernel-space reliability with proper error handling
 | Platform | Board | Architecture | DRM Driver Status | Kernel type |
 |:---------|:------------|:------------|:-----------------|:----------------|
 | **IMX95** | LEC-IMX95 | ARM64 | 📝 Planned | Vendor Kernel 6.12↑ |
-| **IMX93** | PANZER-LITE93 | ARM64 | ✅ Ready,[📄 Guide]() | Vendor Kernel 6.12↑ |
+| **IMX93** | FRDM-IMX93 | ARM64 | ✅ Ready,[📄 Guide]() | Vendor Kernel 6.12↑ |
 | **RZ/V2H** | KAKIP | ARM64 | ✅ Ready, [📄 Guide]() | Vendor Kernel 5.10 |
 | **RK3588** | CUBE-RK3588 | ARM64 | 📝 Planned | TBD |
 | **Raspberry Pi** | PI 2 | ARM32 | ✅ Ready,[📄 Guide]() | Mainline Kernel 6.18↑ |

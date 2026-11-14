@@ -1,88 +1,87 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on NXP FRDM-IMX93 — Linux
 
-## Hardware Preparison
-
-Because [FRDM-IMX93 - Single Board Computer](https://youtu.be/ZpD9j6_nsNI?si=w4PjBL8ydYqj8hmg) has a 40-PIN pin header and compatible with Raspberry PI, so it has one SPI interface can be used.
-
-Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
-
-Then, connect to the FRDM-IMX93 specific PINs of 40-PIN header as follows:
-
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/41bc9647-8dd5-44ff-908a-f1795a9b5108" /><br>
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/06c46f0c-9ead-47b3-beaa-e5750426f513" />
-
-
-
-
-
-
-## Driver Installation instructions
-
-|Kernel|Tested|
+| Item | Value |
 |---|---|
-| 6.12 |&#10004;|
-| 6.6 |&#10004;|
+| Board | [NXP FRDM-IMX93 (Cortex-A55)](https://www.nxp.com/design/design-center/development-boards-and-designs/FRDM-IMX93) |
+| Tested | kernel 6.6, 6.12 |
+| Interface | `/dev/spidev0.0` + 3 GPIOs on `gpiochip0` |
+| Demo source | [pixpaper-213-c-test-frdm-imx93.c](https://github.com/open-ep/linux-user-space-examples/blob/master/2.13/color/spi/pixpaper-213-c-test-frdm-imx93.c) |
 
-Because there has a SPI interface on Linux already, so no need any tweaking in kernel space, just need to checking the device node is exist or not <br>
+> Want to drive the panel from the Cortex-M33 core instead? See the [FRDM-IMX93 M33 guide](FRDM-IMX93-M33_PIXPAPAER-213-C.md). Do not run both at the same time — they use the same pins.
 
-    ls /dev/spidev0.0
- 
+## 1. Wiring
 
-## User-Space Utility instructions (Linux OS)
+Power the board off before wiring. The panel is **3.3 V only** — never use a 5 V pin.
 
-Step 1. Install necessary packages
+<img src="images/wiring/frdm-imx93.svg" width="640" alt="NXP FRDM-IMX93 wiring">
 
-        Ubuntu/Debian:
-        $ sudo apt install gpiod libgpiod-dev
+| Panel | P11 pin | SoC signal |
+|---|---|---|
+| 3V3 | 1 | 3.3 V |
+| GND | 9 (any GND) | GND |
+| MOSI | 19 | LPSPI3 SOUT |
+| SCK | 23 | LPSPI3 SCK |
+| CS# | 24 | LPSPI3 PCS0 |
+| DC# | 27 | GPIO2_IO00 (gpiochip0 line 0) |
+| RST# | 29 | GPIO2_IO05 (line 5) |
+| BUSY | 37 | GPIO2_IO26 (line 26) |
 
-        Yocto:
-        Need add the line in machine conf file as following:
-        IMAGE_INSTALL_append = " libgpiod"
+<details><summary>Photo of a finished setup</summary>
 
+<img width="640" alt="photo" src="https://github.com/user-attachments/assets/06c46f0c-9ead-47b3-beaa-e5750426f513" />
+</details>
 
-Step 2. Prepare a 250x122 size picture what you want to showing, then make a image raw data based header file
+## 2. Enable SPI
 
-        Download the PNG to RAW converter base on python3, remember to install opencv package first
-        $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
+Nothing to do — the stock image already provides the SPI device.
 
-        Then, rename your PNG file as test.png, and excute the python script
-        $ python3 png2epd.py
+**Check:** `ls /dev/spidev0.0` prints `/dev/spidev0.0`.
 
-        It will generate a output file: png_HEX.h, the copy the same folder witth pixpaper-213-c-test-frdm-imx93.c.
-        Note that this step can running on host PC side or target board, but png_HEX.h must be put into the folder with c file together before 
-        compiling.
+## 3. Build and run the demo
 
-        Download a sample header file:
-        wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
+> Needs **libgpiod 1.x** — check with `gpioinfo --version` (must say `v1.x`). With libgpiod 2.x the build fails — see Troubleshooting.
 
+> Yocto image: add `IMAGE_INSTALL:append = " libgpiod libgpiod-dev libgpiod-tools packagegroup-core-buildessential"` to `conf/local.conf`, rebuild, then run the commands below on the board (skip the `apt` line).
 
-Step 3. Please download the utility source code in the rootfs of FRDM-IMX93 SBC, then compile it and execute the compiled executable file.
+```bash
+sudo apt install -y gcc wget gpiod libgpiod-dev
+mkdir -p ~/pixpaper-213c && cd ~/pixpaper-213c
+BASE=https://raw.githubusercontent.com/open-ep/linux-user-space-examples/master/2.13/color/spi
+wget $BASE/pixpaper-213-c-test-frdm-imx93.c $BASE/png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-frdm-imx93.c -lgpiod
+sudo ./epd_test
+```
 
-        PIXPAPER-213-C:
-        # wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-frdm-imx93.c
-        # gcc -o epd_test pixpaper-213-c-test-frdm-imx93.c -lgpiod
-        # ./epd_test
+## 4. Expected result
 
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN, also can issue command 'gpioinfo' to check the gpip pin detail. 
-        Please modify the specific macros definition of pixpaper-213-c-test-frdm-imx93.c:
-
-        #define EPD_GPIO_CHIP "gpiochip0"
-        #define EPD_DC_PIN 0
-        #define EPD_RST_PIN 5
-        #define EPD_BUSY_PIN 26
-
-
-Expection results: <br>
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image. The demo redraws every 30 s until you press **Ctrl+C**.
 
 https://github.com/user-attachments/assets/8735993e-a415-4dd4-976f-4e2e4e37c123
 
+## 5. Show your own picture
 
+```bash
+sudo apt install -y python3-opencv
+wget $BASE/png2epd.py
+# save your picture as test.png: exactly 250 × 122 px (landscape)
+python3 png2epd.py                    # test.png → png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-frdm-imx93.c -lgpiod && sudo ./epd_test
+```
+
+`png2epd.py` does **not** resize or dither. It keeps only 3 exact colours — black `#000000`, red `#FF0000`, yellow `#FFFF00`; every other colour becomes white. It can also run on your PC; just copy `png_HEX.h` to the board.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `/dev/spidev0.0` missing | SPI is not enabled → redo step 2 and reboot. |
+| `/dev/spidev0.0` missing | Your device tree does not put a spidev on LPSPI3. Use the stock NXP image, or add a `spidev` child node to `&lpspi3`. |
+| Compile error `implicit declaration of function 'gpiod_chip_open_by_name'` | Your OS has libgpiod 2.x. Use an image with libgpiod 1.x. |
+| `Failed to request GPIO` / line busy | Another driver owns GPIO2_IO00/05/26. `gpioinfo gpiochip0` shows the user. If you rewire, edit `EPD_DC_PIN` / `EPD_RST_PIN` / `EPD_BUSY_PIN` in the `.c`. |
+| Runs, but the screen never changes | Check 3V3 and GND first, then that MOSI and SCK are not swapped. |
+| Hangs at 100 % CPU, no flashing | BUSY or RST# wire is loose (BUSY idles high, low = busy). |
 
 ## Contributors
 

@@ -1,51 +1,52 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-# WIZnet W6300-EVB-Pico2 / Raspberry Pi Pico 2 (Zephyr)
+# PIXPAPER-213-C on W6300-EVB-Pico2 / Raspberry Pi Pico 2 — Zephyr
 
-> **Source code:** [zephyr-user-space-examples/boards/w6300_evb_pico2](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2)
+| Item | Value |
+|---|---|
+| Board | [WIZnet W6300-EVB-Pico2](https://docs.wiznet.io/Product/iEthernet/W6300/w6300-evb-pico2) (`w6300_evb_pico2/rp2350a/m33`) or Raspberry Pi Pico 2 (`rpi_pico2/rp2350a/m33`) |
+| Host | Ubuntu (x86-64) |
+| Zephyr | upstream board support, Zephyr SDK ≥ 1.0 |
+| Source | [zephyr-user-space-examples → w6300_evb_pico2/samples/pixpaper_213c](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2/samples/pixpaper_213c) |
 
-A [W6300-EVB-Pico2](https://docs.wiznet.io/Product/iEthernet/W6300/w6300-evb-pico2)
-is a Raspberry Pi Pico 2 form-factor board: **RP2350** (dual Cortex-M33 @ 150 MHz,
-520 KB SRAM, 2 MB flash) plus a W6300 hardwired-TCP/IP ethernet chip. Like the
-UIAPduino, this is a standalone MCU — the Zephyr firmware is the whole system.
+The sample only uses GP2–GP7 and never touches the W6300 chip, so a bare Pico 2 works the same.
+It alternates a bundled picture and a 4-colour bar pattern every 30 s. The image is 7750 B (0.4 % of the 2 MB flash).
 
-Board support is **upstream** (`w6300_evb_pico2`), so no PR branch or patches are
-needed. The same firmware also builds for the plain
-**Raspberry Pi Pico 2** (`rpi_pico2/rp2350a/m33`) — the two produce a
-byte-identical binary here, because these samples only use GP2–GP7 and never
-touch the W6300.
+> Using the Pico SDK instead? See the [Pico guide](RPI-PICO_PIXPAPAER-213-C.md) — it uses **different pins** (GP16–GP21).
 
-## Why this board is comfortable
+## 1. Wiring
 
-| | UIAPduino (CH32V003) | This board (RP2350) |
-| --- | --- | --- |
-| Flash / SRAM | 16 KB / 2 KB | 2 MB / 520 KB |
-| 4-colour panel (7750 B image) | does not fit | 1.3 % of flash |
-| Logic level | needs the 3.3 V Volt-Sel rework | natively 3.3 V, no rework |
-| Flashing | USB bootloader + `minichlink` ritual | hold BOOTSEL, drag a `.uf2` |
+Unplug USB before wiring. The panel is **3.3 V only** — use `3V3(OUT)`, never `VBUS` / `VSYS`.
 
-The extra room is what makes the bigger samples here possible: a 4-level
-grayscale image, a self-playing games showcase, and a video player with the
-clip embedded in flash.
+<img src="images/wiring/w6300-evb-pico2.svg" width="640" alt="W6300-EVB-Pico2 wiring">
 
-## Setup
+| Panel | Header pin | GPIO |
+|---|---|---|
+| 3V3 | 36 | 3V3(OUT) |
+| GND | 8 | GND |
+| MOSI | 5 | GP3 |
+| SCK | 4 | GP2 |
+| CS# | 6 | GP4 |
+| DC# | 7 | GP5 |
+| RST# | 9 | GP6 |
+| BUSY | 10 | GP7 |
 
-### 1. Toolchain (one-time per machine)
+All signals sit on header pins 4–10 on one edge, away from the W6300 (GP15–GP22) and the console UART (GP0/GP1). SPI is bit-banged on these GPIOs.
 
-Zephyr SDK **>= 1.0** with the `arm-zephyr-eabi` toolchain. The minimal tarball
-plus one toolchain is a few hundred MB instead of several GB:
+Optional console: UART0 TX = GP0, RX = GP1, 115200 8N1, through a 3.3 V USB-UART dongle.
+
+## 2. Install the toolchain (once per PC)
 
 ```bash
+sudo apt install -y cmake ninja-build device-tree-compiler python3-venv wget git
 cd ~
 wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v1.0.1/zephyr-sdk-1.0.1_linux-x86_64_minimal.tar.xz
 tar xf zephyr-sdk-1.0.1_linux-x86_64_minimal.tar.xz
 cd zephyr-sdk-1.0.1
-./setup.sh -t arm-zephyr-eabi -c   # -c registers it so west finds it automatically
+./setup.sh -t arm-zephyr-eabi -c   # -c registers it so west finds it
 ```
 
-You also need `cmake`, `ninja-build`, `device-tree-compiler` and `python3-venv`.
-
-### 2. Zephyr workspace
+## 3. Create the Zephyr workspace (once)
 
 ```bash
 mkdir ~/zephyrproject && cd ~/zephyrproject
@@ -56,58 +57,38 @@ python3 -m venv .venv
 .venv/bin/pip install -r zephyr/scripts/requirements-base.txt
 ```
 
-### 3. Build
+## 4. Build
 
 ```bash
-git clone https://github.com/open-ep/zephyr-user-space-examples.git
+git clone https://github.com/open-ep/zephyr-user-space-examples.git ~/zephyr-user-space-examples
 cd ~/zephyrproject
-.venv/bin/west build -b w6300_evb_pico2/rp2350a/m33 \
-    path/to/zephyr-user-space-examples/boards/w6300_evb_pico2/samples/pixpaper_213c/apps/quick-update
+.venv/bin/west build -p always -b w6300_evb_pico2/rp2350a/m33 \
+    ~/zephyr-user-space-examples/boards/w6300_evb_pico2/samples/pixpaper_213c/apps/quick-update
 ```
 
-The firmware lands in `build/zephyr/zephyr.uf2` (note the extra `/zephyr/` path
-segment). For the official Pico 2, swap the board for `rpi_pico2/rp2350a/m33`.
+For a plain Pico 2, use `-b rpi_pico2/rp2350a/m33`.
 
-## Flashing
+**Check:** `ls build/zephyr/zephyr.uf2` exists (note the extra `/zephyr/`).
 
-1. Unplug USB, hold **BOOTSEL**, plug USB back in, release — a USB mass-storage
-   drive named `RP2350` appears.
+## 5. Flash
+
+1. Unplug USB, hold **BOOTSEL**, plug USB back in, release → a USB drive named `RP2350` appears.
 2. Copy `build/zephyr/zephyr.uf2` onto it.
-3. The board unmounts itself and reboots into the new firmware immediately.
+3. The board reboots into the new firmware by itself.
 
-No driver, no flashing tool, no reset ritual. The bootloader lives in ROM, so it
-is always reachable and cannot be bricked.
+After that the board no longer shows up on USB (the sample has no USB function) — that is expected, not a failed flash. The BOOTSEL bootloader is in ROM, so you can always re-flash.
 
-Once your firmware runs, the board no longer appears as a USB device (these
-samples have no USB function) — that is expected, not a failed flash.
+## 6. Expected result
 
-## Wiring (all samples)
+About 1 s after power-up the panel starts a full refresh: it flashes for **15–25 s** (normal for this panel), then shows the picture. 30 s later it switches to the colour bars, and keeps alternating.
 
-| Panel | GPIO | Header pin | Notes |
-| ----- | ---- | ---------- | ----- |
-| VCC   | 3V3  | 36 | panel is 3.3 V-only |
-| GND   | GND  | 8  | |
-| CLK   | GP2  | 4  | bit-banged SCK, mode 0 |
-| DIN   | GP3  | 5  | bit-banged MOSI |
-| CS    | GP4  | 6  | |
-| DC    | GP5  | 7  | low = command, high = data |
-| RST   | GP6  | 9  | low = reset |
-| BUSY  | GP7  | 10 | polarity differs per panel — see each sample |
+## Troubleshooting
 
-GP2–GP7 are header pins 4–10 in one run, so the panel ribbon lands on a single
-edge. They were chosen to stay clear of the W6300 (GP15–GP22) and of the console
-UART (GP0/GP1), which keeps the same wiring valid on a bare Pico 2.
+| Symptom | Fix |
+|---|---|
+| No `RP2350` drive | Hold BOOTSEL **before** plugging USB in; try another cable (some are charge-only). |
+| Screen never changes | Check 3V3 (pin 36) and GND, then that MOSI (GP3) and SCK (GP2) are not swapped. |
+| Console prints `warn: BUSY timeout` (or the screen stays blank) | BUSY or RST# wire is loose (BUSY idles high, low = busy). The console prints `refreshing (15-25 s)...` / `done` on a good refresh. |
+| `west build` cannot find a toolchain | Re-run `./setup.sh -t arm-zephyr-eabi -c` in `~/zephyr-sdk-1.0.1`. |
 
-Console output (`printk`) is on UART0: TX = GP0, RX = GP1, 115200 8N1, via a
-3.3 V USB-UART dongle. It is optional — every sample runs without it.
-
-SPI is bit-banged over plain GPIOs on purpose: these panels are slow,
-write-only devices, so a hardware SPI controller buys nothing and the code stays
-identical across boards.
-
-## Samples
-
-| Sample | Panel |
-| ------ | ----- |
-| [pixpaper_213c](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2/samples/pixpaper_213c) | Open-EP pixpaper-213c 2.13" 4-colour (quick-update image) |
-| [pixpaper_213m](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2/samples/pixpaper_213m) | Open-EP pixpaper-213m 2.13" mono — see the [PIXPAPER-213-M guide](https://github.com/open-ep/PIXPAPER-213-M/blob/main/ZEPHYR-W6300-EVB-PICO2_PIXPAPAER-213-M.md) |
+The mono panel uses the same board and pins: see the [pixpaper_213m sample](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2/samples/pixpaper_213m).

@@ -1,66 +1,61 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on Raspberry Pi Pico / Pico 2 — Pico SDK
 
-|Platform|Tested|
+| Item | Value |
 |---|---|
-| Pico 2 | &#10004;|
-| Pico |&#10004;|
+| Board | [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) ✔, Raspberry Pi Pico ✔ |
+| Toolchain | VS Code + official *Raspberry Pi Pico* extension (Windows / Linux / macOS) |
+| Source | [meteorTriangle/EPDA0213E5_4C](https://github.com/meteorTriangle/EPDA0213E5_4C) |
 
+> Using Zephyr instead? See the [W6300-EVB-Pico2 / Pico 2 Zephyr guide](ZEPHYR-W6300-EVB-PICO2_PIXPAPAER-213-C.md) — it uses **different pins** (GP2–GP7).
 
-## Hardware Preparison
+## 1. Wiring
 
-Because [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) has a generic pin header with one SPI interface can be used.
+Unplug USB before wiring. The panel is **3.3 V only** — use `3V3(OUT)`, never `VBUS` / `VSYS`.
 
-Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
+<img src="images/wiring/rpi-pico.svg" width="640" alt="Pico wiring">
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
+| Panel | Pico pin | GPIO |
+|---|---|---|
+| 3V3 | 36 | 3V3(OUT) |
+| GND | 23 (any GND) | GND |
+| MOSI | 25 | GP19 (SPI0 TX) |
+| SCK | 24 | GP18 (SPI0 SCK) |
+| CS# | 22 | GP17 |
+| DC# | 21 | GP16 |
+| RST# | 26 | GP20 |
+| BUSY | 27 | GP21 |
 
+<details><summary>Original wiring picture</summary>
 
-Then, connect to the Raspberry Pi Pico 2 specific PINs of PIN header as follows:
+<img src="https://github.com/user-attachments/assets/d5272a2f-a0cf-4cf8-a5ca-c44d774f407b" width="400">
+</details>
 
-<img src="https://github.com/user-attachments/assets/d5272a2f-a0cf-4cf8-a5ca-c44d774f407b" width="400"> <br>
-|PIXPAPER-213-C Pinout|Pico Pin assignment|
-|---|---|
-| 3V3 | 3V3(OUT)|
-| GND | GND|
-| MOSI | GPIO19|
-| SCK | GPIO18|
-| CS | GPIO17|
-| DC | GPIO16|
-| RST | GPIO20|
-| BUSY | GPIO21|
+## 2. Build and flash
 
-## Firmware Update
+1. Install [VS Code](https://code.visualstudio.com/) and the **Raspberry Pi Pico** extension.
+2. Get the code:
+   ```bash
+   git clone https://github.com/meteorTriangle/EPDA0213E5_4C
+   ```
+3. In VS Code: Pico extension → **Import Project** → select the `EPDA0213E5_4C` folder.
+   The project targets **Pico 2**. For the original Pico, change `set(PICO_BOARD pico2 ...)` to `pico` in `CMakeLists.txt` first.
+4. Hold **BOOTSEL**, plug in USB, release. Click **Run** (compile + flash) in the status bar.
 
-Step 1. Install necessary packages (Windows, Ubuntu host both work)
+## 3. Expected result
 
-        1. VScode Studio
-        2. open VScode and install pi pico extension
-
-
-Step 2. Prepare the example code and import to VScode
-
-        Download link
-        $ git clone https://github.com/meteorTriangle/EPDA0213E5_4C
-
-Step 3. Pressing compile and deploy button to flash the firmware to Pico, then it works
-
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN.
-        Please modify the specific macros definition of extern/EPDA0213E5_4C_RPIMCU_driver/epd_lib.h:
-
-        // Pin definitions
-        #define EPD_SPI_TX 19
-        #define EPD_SPI_SCK 18
-        #define EPD_SPI_CS 17
-        #define EPD_DC 16
-        #define EPD_RST 20
-        #define EPD_BUSY 21
-
-
-Expection results: <br>
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the image.
 
 https://github.com/user-attachments/assets/ced76960-1656-456d-a9b5-52f5efae2fb5
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| Screen never changes | Check 3V3 (pin 36) and GND, then that MOSI (GP19) and SCK (GP18) are not swapped. |
+| Different wiring | Edit the pin numbers in `extern/EPDA0213E5_4C_RPIMCU_driver/epd_lib.h` (`EPD_SPI_TX`, `EPD_SPI_SCK`, `EPD_SPI_CS`, `EPD_DC`, `EPD_RST`, `EPD_BUSY`), rebuild. MOSI/SCK must stay on SPI0-capable pins. |
+| Own picture | Use the converter in the repo's `png2bitmap/` folder (see its README). |
 
 ## Contributors
 

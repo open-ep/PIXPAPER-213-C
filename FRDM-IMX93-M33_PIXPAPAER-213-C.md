@@ -1,105 +1,94 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on FRDM-IMX93 Cortex-M33 — FreeRTOS
 
-## Hardware Preparison
+The panel is driven by the **Cortex-M33** core (FreeRTOS). Linux on the Cortex-A55 only loads and starts the firmware through `remoteproc`.
 
-Because [FRDM-IMX93 - Single Board Computer](https://youtu.be/ZpD9j6_nsNI?si=w4PjBL8ydYqj8hmg) has a 40-PIN pin header and compatible with Raspberry PI, so it has one SPI interface can be used.
-
-Different with previously, we will running the e-paper demo on Cortex-M33 core.
-
-Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
-
-
-Then, connect to the FRDM-IMX93 specific PINs of 40-PIN header as follows:
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/41bc9647-8dd5-44ff-908a-f1795a9b5108" /><br>
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/06c46f0c-9ead-47b3-beaa-e5750426f513" />
-
-
-## Firmware Installation instructions
-
-|FreeRTOS|Tested|
+| Item | Value |
 |---|---|
-| SDK_24_12_00 |&#10004;|
+| Board | [NXP FRDM-IMX93](https://www.nxp.com/design/design-center/development-boards-and-designs/FRDM-IMX93) |
+| Tested | MCUXpresso SDK_24_12_00 |
+| Source | [open-ep/freertos-frdm-imx93_m33](https://github.com/open-ep/freertos-frdm-imx93_m33) |
 
-Please download our sample code and compile as elf file
+## Before you start
 
-Ubuntu Host PC (20.04 or above):
+- Linux must expose the M33: `ls /sys/class/remoteproc/remoteproc0` must exist. If not, boot a device tree with M33 / rpmsg support.
+- Linux must **not** use LPSPI3 or GPIO2_IO00/05/26. Do not run the [A55 Linux guide](FRDM-IMX93_PIXPAPAER-213-C.md) at the same time — it uses the same pins.
 
-    Step 1. Package pre-installation
-    $ sudo apt install cmake git
+## 1. Wiring
 
-    Step 2. Download the source code
-    $ git clone https://github.com/open-ep/freertos-frdm-imx93_m33.git
+Same pins as the A55 guide. Power the board off before wiring; the panel is **3.3 V only**.
 
-    Step 3. Download the toolchain
-    filename: arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz
+<img src="images/wiring/frdm-imx93.svg" width="640" alt="FRDM-IMX93 wiring">
 
-    Step 4. Compiling the source
-    $ export ARMGCC_DIR=/opt/m33/toolchain
-    $ cd <source directory>/boards/mcimx93evk/driver_examples/lpspi/pixpaper-213/master/armgcc
-    $ ./build_release.sh
+| Panel | P11 pin | SoC signal |
+|---|---|---|
+| 3V3 | 1 | 3.3 V |
+| GND | 9 (any GND) | GND |
+| MOSI | 19 | LPSPI3 SOUT |
+| SCK | 23 | LPSPI3 SCK |
+| CS# | 24 | LPSPI3 PCS0 |
+| DC# | 27 | GPIO2_IO00 |
+| RST# | 29 | GPIO2_IO05 |
+| BUSY | 37 | GPIO2_IO26 |
 
-    Step 5. Output firmware file
-    $ ./release/lpspi_polling_b2b_transfer_master.elf
+## 2. Build the firmware
 
-    Step 6. Rename your firmware file name (optional)
-    $ mv lpspi_polling_b2b_transfer_master.elf pixpaper-c-213-demo.elf
+Build on an x86-64 Ubuntu PC (20.04+) **or** directly on the board (Ubuntu 24.04 on the A55). Only the toolchain file differs:
 
-Ubuntu 24.04 on Cortex-A55 (NEW):
+| Build on | Toolchain file |
+|---|---|
+| x86-64 PC | `arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz` |
+| the board (aarch64) | `arm-gnu-toolchain-12.2.mpacbti-rel1-aarch64-arm-none-eabi.tar.xz` |
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/0a725e9b-2dbe-422d-bed6-e067d76383a5" />
+```bash
+sudo apt install -y cmake git wget xz-utils
 
+# toolchain → /opt/m33/toolchain   (replace x86_64 with aarch64 when building on the board)
+TC=arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi
+wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/$TC.tar.xz
+sudo mkdir -p /opt/m33 && sudo tar xf $TC.tar.xz -C /opt/m33 && sudo mv /opt/m33/$TC /opt/m33/toolchain
+export ARMGCC_DIR=/opt/m33/toolchain
 
+git clone https://github.com/open-ep/freertos-frdm-imx93_m33.git
+cd freertos-frdm-imx93_m33/boards/mcimx93evk/driver_examples/lpspi/pixpaper-213/master/armgcc
+./build_release.sh
+cp release/lpspi_polling_b2b_transfer_master.elf ~/pixpaper-c-213-demo.elf
+```
 
-    Step 1. Package pre-installation
-    $ sudo apt install cmake
+(The project folder is named `mcimx93evk`; the same build runs on FRDM-IMX93.)
 
-    Step 2. Download the source code
-    $ git clone https://github.com/open-ep/freertos-frdm-imx93_m33.git
+**Check:** `ls ~/pixpaper-c-213-demo.elf` exists.
 
-    Step 3. Download the toolchain
-    filename: arm-gnu-toolchain-12.2.mpacbti-rel1-aarch64-arm-none-eabi.tar.xz
-    decompress and move to under /opt/m33/ and rename toolchain folder
+## 3. Run it on the M33
 
-    Step 4. Compiling the source
-    $ export ARMGCC_DIR=/opt/m33/toolchain
-    $ cd <source directory>/boards/mcimx93evk/driver_examples/lpspi/pixpaper-213/master/armgcc
-    $ ./build_release.sh
+Copy `pixpaper-c-213-demo.elf` to the board (scp / USB stick), then on the board:
 
-    Step 5. Output firmware file
-    $ ./release/lpspi_polling_b2b_transfer_master.elf
+```bash
+# Ubuntu: tell the firmware loader where the .elf is (Yocto: put the .elf in /lib/firmware and skip this line)
+echo -n "$HOME/" | sudo tee /sys/module/firmware_class/parameters/path
 
-    Step 6. Rename your firmware file name (optional)
-    $ mv lpspi_polling_b2b_transfer_master.elf pixpaper-c-213-demo.elf
+echo -n pixpaper-c-213-demo.elf | sudo tee /sys/class/remoteproc/remoteproc0/firmware
+echo -n start | sudo tee /sys/class/remoteproc/remoteproc0/state
+cat /sys/class/remoteproc/remoteproc0/state        # → running
+```
 
-## Firmware Running instructions on Linux OS
+Stop it with `echo -n stop | sudo tee /sys/class/remoteproc/remoteproc0/state`.
 
-Step 1. Move compiled firmware to FRDM-IMX93's Linux OS via network, USB storage, etc.
+## 4. Expected result
 
-Step 2. Setting the environment for remoteproc function
-
-        $ echo -n /home/ubuntu/ > /sys/module/firmware_class/parameters/path (Yocto no need this commnad)
-        $ echo -n pixpaper-c-213-demo.elf > /sys/class/remoteproc/remoteproc0/firmware
-
-Step 3. Starting the remoteproce, load assigned firmware on M33 core
-
-        $ echo -n start > /sys/class/remoteproc/remoteproc0/state
-
-        If you want to stop the running firmware on M33 core, issue the stop command
-        $ echo -n stop > /sys/class/remoteproc/remoteproc0/state
-
-
-Expection results: <br>
-
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image.
 
 https://github.com/user-attachments/assets/8735993e-a415-4dd4-976f-4e2e4e37c123
 
+## Troubleshooting
 
-
+| Symptom | Fix |
+|---|---|
+| `remoteproc0` does not exist | The device tree has no M33 support — boot an M33 / rpmsg device tree. |
+| `start` fails: `Direct firmware load ... failed` | Wrong path. `firmware_class/parameters/path` must be the folder (with trailing `/`) that holds the `.elf`. |
+| Board freezes right after `start` | Linux has gated the LPSPI3 / GPIO2 clocks that the M33 uses. Make sure Linux does not use LPSPI3/GPIO2 and does not turn their clocks off. |
+| State is `running`, screen never changes | Check 3V3 / GND, then that MOSI and SCK are not swapped. |
 
 ## Contributors
 

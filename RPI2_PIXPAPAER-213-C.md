@@ -1,91 +1,85 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on Raspberry Pi 2 — Linux
 
-## Hardware Preparison
+| Item | Value |
+|---|---|
+| Board | [Raspberry Pi 2 Model B](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/) |
+| Tested | Raspberry Pi OS Bookworm (Nov 2024) |
+| Interface | `/dev/spidev0.0` + 3 GPIOs on `gpiochip0` |
+| Demo source | [pixpaper-213-c-test-rpi2.c](https://github.com/open-ep/linux-user-space-examples/blob/master/2.13/color/spi/pixpaper-213-c-test-rpi2.c) |
 
-[Raspberry PI 2 Model](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/) is a very low-power ARM32 Cortex-A7 platform released in 2014. Even after 10 years, it remains a top choice for simple IoT applications and continues to be available on the official website. Its operating system is also actively maintained. If you’re looking for an energy-efficient and affordable solution, especially when paired with the PIXPAPER-213-C for simple applications, the Raspberry PI 2 is an excellent option.
+## 1. Wiring
 
-To start, use the raspi-config command to open the configuration interface and enable SPI.
-Note that our Raspberry Pi OS is based on the November 2024 release.
+Power the board off before wiring. The panel is **3.3 V only** — never use a 5 V pin.
 
+<img src="images/wiring/rpi2.svg" width="640" alt="Raspberry Pi 2 wiring">
 
-Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
+| Panel | Pi header pin | SoC signal |
+|---|---|---|
+| 3V3 | 1 | 3.3 V |
+| GND | 9 (any GND) | GND |
+| MOSI | 19 | GPIO10 / SPI0 MOSI |
+| SCK | 23 | GPIO11 / SPI0 SCLK |
+| CS# | 24 | GPIO8 / SPI0 CE0 |
+| DC# | 16 | GPIO23 |
+| RST# | 18 | GPIO24 |
+| BUSY | 22 | GPIO25 |
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
+<details><summary>Photo of a finished setup</summary>
 
-Then, connect to the Raspberry PI specific PINs of 40-PIN header as follows:
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/e5918ec0-b46e-4a1f-95e9-53da998e52f0" />
+<img width="640" alt="photo" src="https://github.com/user-attachments/assets/e5918ec0-b46e-4a1f-95e9-53da998e52f0" />
+</details>
 
+## 2. Enable SPI
 
+```bash
+sudo raspi-config nonint do_spi 0     # same as: raspi-config → Interface Options → SPI → Yes
+sudo reboot
+```
 
-## Driver Installation instructions
+**Check:** `ls /dev/spidev0.0` prints `/dev/spidev0.0`.
 
-Raspberry PI OS can dynamic enable/disable SPI interface, no need tweak kernel source code.
-Issue "rasp-config" command into the control GUI and following steps as below:
+## 3. Build and run the demo
 
-Step 1. Selecting **Interface Options** <br>
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/d129666a-a945-4662-bb39-67629a0bf9f4" />
+> Needs **libgpiod 1.x** — check with `gpioinfo --version` (must say `v1.x`). Raspberry Pi OS Bookworm ships 1.6.3 (OK). With libgpiod 2.x the build fails — see Troubleshooting.
 
-Step 2. Selecting **SPI** to enable SPI interface <br>
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/8dfb5ce3-cb5b-4ae9-b4e2-10a0cda5a5bd" />
+```bash
+sudo apt install -y gcc wget gpiod libgpiod-dev
+mkdir -p ~/pixpaper-213c && cd ~/pixpaper-213c
+BASE=https://raw.githubusercontent.com/open-ep/linux-user-space-examples/master/2.13/color/spi
+wget $BASE/pixpaper-213-c-test-rpi2.c $BASE/png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-rpi2.c -lgpiod
+sudo ./epd_test
+```
 
-Step 3. Selecting **YES** to make sure your change <br>
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/ab50b6ee-20a9-407c-940a-522bf97c3a4a" />
+## 4. Expected result
 
-Step 4. It will showing the SPI enabled message, just select OK to close the  <br>
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/07d52120-d5ab-4548-bf98-a2ddc9263794" />
-
-Step 5. Reboot the device and check spi device node is existed or not.
-
-    ls /dev/spidev0.0
- 
-
-## User-Space Utility instructions (Linux OS)
-
-
-
-Step 1. Install necessary packages
-
-        Ubuntu/Debian:
-        $ sudo apt install gpiod libgpiod-dev
-
-
-Step 2. Prepare a 250x122 size picture what you want to showing, then make a image raw data based header file
-
-        Download the PNG to RAW converter base on python3, remember to install opencv package first
-        $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
-
-        Then, rename your PNG file as test.png, and excute the python script
-        $ python3 png2epd.py
-
-        It will generate a output file: png_HEX.h, the copy the same folder witth pixpaper-213-c-test-rpi2.c.
-        Note that this step can running on host PC side or target board, but png_HEX.h must be put into the folder with c file together before 
-        compiling.
-
-        Download a sample header file:
-        wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
-
-
-Step 3. Please download the utility source code in the rootfs of Raspberry PI, then compile it and execute the compiled executable file.
-
-        # wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-rpi2.c
-        # gcc -o epd_test pixpaper-213-c-test-rpi2.c -lgpiod
-        # ./epd_test
-
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN, also can issue command 'gpioinfo' to check the gpip pin detail. 
-        Please modify the specific macros definition of pixpaper-213-c-test-rpi2.c:
-
-        #define EPD_GPIO_CHIP "gpiochip0"
-        #define EPD_DC_PIN 23
-        #define EPD_RST_PIN 24
-        #define EPD_BUSY_PIN 25
-
-
-Expection results: <br>
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image. The demo redraws every 30 s until you press **Ctrl+C**.
 
 https://github.com/user-attachments/assets/9a45a8c4-d8d0-4d60-a007-33870f8bfbd4
+
+## 5. Show your own picture
+
+```bash
+sudo apt install -y python3-opencv
+wget $BASE/png2epd.py
+# save your picture as test.png: exactly 250 × 122 px (landscape)
+python3 png2epd.py                    # test.png → png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-rpi2.c -lgpiod && sudo ./epd_test
+```
+
+`png2epd.py` does **not** resize or dither. It keeps only 3 exact colours — black `#000000`, red `#FF0000`, yellow `#FFFF00`; every other colour becomes white. It can also run on your PC; just copy `png_HEX.h` to the board.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `/dev/spidev0.0` missing | SPI is not enabled → redo step 2 and reboot. |
+| Compile error `implicit declaration of function 'gpiod_chip_open_by_name'` | Your OS has libgpiod 2.x. Use an image with libgpiod 1.x. |
+| `Failed to request GPIO` / line busy | Another driver owns GPIO23/24/25. `gpioinfo gpiochip0` shows the user. If you rewire, edit `EPD_DC_PIN` / `EPD_RST_PIN` / `EPD_BUSY_PIN` in the `.c`. |
+| Runs, but the screen never changes | Check 3V3 and GND first, then that MOSI and SCK are not swapped. |
+| Hangs at 100 % CPU, no flashing | BUSY or RST# wire is loose (BUSY idles high, low = busy). |
 
 ## Contributors
 

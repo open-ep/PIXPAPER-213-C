@@ -1,121 +1,125 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on CUBE-RK3588 — Linux
 
-## Hardware Preparison
-
-Based on the [CUBE-RK3588](https://github.com/MayQueenTechCommunity/CUBE-RK3588) hardware design, SPI interface support was not originally included. However, you have a option to use the SPI interface from UART interfaces on CUBE-RK3588: <br>
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
-
-The CUBE-RK3588 SPI can be connected as follows COM1 & COM2 mapping:
-<img width="536" height="401" alt="image" src="https://github.com/user-attachments/assets/0b979c3f-dc40-4ad3-9fe2-24afd07a2368" />
-
-
-## Driver Installation instructions
-
-|Kernel|Tested|
+| Item | Value |
 |---|---|
-| 6.1 |&#10004;|
+| Board | [CUBE-RK3588 (device tree `rk3588-b675.dts`)](https://github.com/MayQueenTechCommunity/CUBE-RK3588) |
+| Tested | kernel 6.1 |
+| Interface | `/dev/spidev4.0` + 3 GPIOs on `gpiochip4` |
+| Demo source | [pixpaper-213-c-test-rk3588.c](https://github.com/open-ep/linux-user-space-examples/blob/master/2.13/color/spi/pixpaper-213-c-test-rk3588.c) |
 
-Step 1. Download the kernel source and modify the target device tree file: rk3588-b675.dts <br>
-Step 2. Merge the patch as follows modification from UART to SPI, a quick way is download these code as a patch, then use git apply into the kernel source.<br>
+## 1. Wiring
+
+Power the board off before wiring. The panel is **3.3 V only** — never use a 5 V pin.
+
+CUBE-RK3588 has no SPI header. The two UART headers **COM1 / COM2** are turned into SPI4 (step 2),
+so the panel goes on those pins. Grid below = the two 2×5 headers as seen in the photo (`·` = not connected):
+
+| Left header | col 1 | col 2 | col 3 | col 4 | col 5 |
+|---|---|---|---|---|---|
+| top row | **GND** | · | **BUSY** | **CS#** | · |
+| bottom row | **3V3** | · | **DC#** | **RST#** | · |
+
+| Right header | col 1 | col 2 | col 3 | col 4 | col 5 |
+|---|---|---|---|---|---|
+| top row | · | · | **MOSI** | · | · |
+| bottom row | · | · | · | **SCK** | · |
+
+| Panel | RK3588 signal |
+|---|---|
+| MOSI / SCK | SPI4 (`spi4m2` pins) |
+| CS# | GPIO4_D4 (driven by `cs-gpios`) |
+| DC# | GPIO4_D2 (gpiochip4 line 26) |
+| RST# | GPIO4_D3 (gpiochip4 line 27) |
+| BUSY | GPIO4_D5 (gpiochip4 line 29) |
+
+<img width="536" alt="photo" src="https://github.com/user-attachments/assets/0b979c3f-dc40-4ad3-9fe2-24afd07a2368" />
+
+## 2. Enable SPI
+
+COM1/COM2 stop working as UARTs after this change.
+
+1. In the kernel source, edit `arch/arm64/boot/dts/rockchip/rk3588-b675.dts` (this is the CUBE-RK3588 board file):
 
 ```diff
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-b675.dts b/arch/arm64/boot/dts/rockchip/rk3588-b675.dts
-index caf79a6b1505..7a4bb47d0141 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-b675.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-b675.dts
-@@ -1250,13 +1250,11 @@ &u2phy3_host {
- };
- 
  &uart5 {
 -	status = "okay";
 -	pinctrl-0 = <&uart5m0_xfer &uart5m0_ctsn &uart5m0_rtsn>;
 +	status = "disabled";
  };
- 
+
  &uart6 {
 -	status = "okay";
 -	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
 +	status = "disabled";
  };
- 
- &uart9 {
-@@ -1528,3 +1526,16 @@ &sdio {
- &dmc {
- 	status = "disabled";
- };
-+
-+&spi4 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi4m2_pins>;
-+	cs-gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_LOW>;
-+	num-cs = <1>;
-+	spi_test@0 {
-+		compatible = "rockchip,spidev";
-+		reg = <0>;
-+		spi-max-frequency = <5000000>;
-+	};
-+};
--- 
 ```
 
-Step 3. Recompile the kernel and copy the new dtb file to the boot partition instead of the old one. <br>
-Step 4. Boot up the system and checking the device node is exist or not <br>
+and append at the end of the file:
 
-    ls /dev/spidev4.0
-    
+```dts
+&spi4 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi4m2_pins>;
+	cs-gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_LOW>;
+	num-cs = <1>;
 
-## User-Space Utility instructions (Linux OS)
+	spi_test@0 {
+		compatible = "rockchip,spidev";
+		reg = <0>;
+		spi-max-frequency = <5000000>;
+	};
+};
+```
 
-Step 1. Install necessary packages
+2. Rebuild the dtb, copy it over the old one in the boot partition, reboot.
 
-        Ubuntu/Debian:
-        $ sudo apt install gpiod libgpiod-dev
+**Check:** `ls /dev/spidev4.0` prints `/dev/spidev4.0`.
 
-        Yocto:
-        Need add the line in machine conf file as following:
-        IMAGE_INSTALL_append = " libgpiod"
+## 3. Build and run the demo
 
-Step 2. Prepare a 250x122 size picture what you want to showing, then make a image raw data based header file
+> Needs **libgpiod 1.x** — check with `gpioinfo --version` (must say `v1.x`). With libgpiod 2.x the build fails — see Troubleshooting.
 
-        Download the PNG to RAW converter base on python3, remember to install opencv package first
-        $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
+> Yocto image: add `IMAGE_INSTALL:append = " libgpiod libgpiod-dev libgpiod-tools packagegroup-core-buildessential"` to `conf/local.conf`, rebuild, then run the commands below on the board (skip the `apt` line).
 
-        Then, rename your PNG file as test.png, and excute the python script
-        $ python3 png2epd.py
+```bash
+sudo apt install -y gcc wget gpiod libgpiod-dev
+mkdir -p ~/pixpaper-213c && cd ~/pixpaper-213c
+BASE=https://raw.githubusercontent.com/open-ep/linux-user-space-examples/master/2.13/color/spi
+wget $BASE/pixpaper-213-c-test-rk3588.c $BASE/png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-rk3588.c -lgpiod
+sudo ./epd_test
+```
 
-        It will generate a output file: png_HEX.h, the copy the same folder witth pixpaper-213-c-test-imx8mp.c.
-        Note that this step can running on host PC side or target board, but png_HEX.h must be put into the folder with c file together before 
-        compiling.
+## 4. Expected result
 
-        Download a sample header file:
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image (progress bars on a black background). The demo redraws every 5 s until you press **Ctrl+C**.
 
+<img width="640" alt="result" src="https://github.com/user-attachments/assets/224ee0a3-6eda-4a69-8ffe-28d9f717d7a8" />
 
-Step 3. Please download the utility source code in the rootfs of CUBE-RK3588, then compile it and execute the compiled executable file.
+## 5. Show your own picture
 
-        PIXPAPER-213-C:
-        # wget https://github.com/open-ep/linux-user-space-examples/raw/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-rk3588.c
-        # gcc -o epd_test pixpaper-213-c-test-rk3588.c -lgpiod
-        # ./epd_test
+```bash
+sudo apt install -y python3-opencv
+wget $BASE/png2epd.py
+# save your picture as test.png: exactly 250 × 122 px (landscape)
+python3 png2epd.py                    # test.png → png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-rk3588.c -lgpiod && sudo ./epd_test
+```
 
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN,
-        please modify the specific macros definition of pixpaper-213-c-test-imx8mp.c:
+`png2epd.py` does **not** resize or dither. It keeps only 3 exact colours — black `#000000`, red `#FF0000`, yellow `#FFFF00`; every other colour becomes white. It can also run on your PC; just copy `png_HEX.h` to the board.
 
-        #define EPD_GPIO_CHIP "gpiochip4"
-        #define EPD_DC_PIN 26
-        #define EPD_RST_PIN 27
-        #define EPD_BUSY_PIN 29
+## Troubleshooting
 
-
-Expection results: <br>
-final image is some procgress bar with black background <br>
-![ezgif-4-6446ab9a4e](https://github.com/user-attachments/assets/224ee0a3-6eda-4a69-8ffe-28d9f717d7a8)
-
+| Symptom | Fix |
+|---|---|
+| `/dev/spidev4.0` missing | SPI is not enabled → redo step 2 and reboot. |
+| Compile error `implicit declaration of function 'gpiod_chip_open_by_name'` | Your OS has libgpiod 2.x. Use an image with libgpiod 1.x. |
+| `Failed to request GPIO` / line busy | Another driver owns GPIO4_D2/D3/D5. `gpioinfo gpiochip4` shows the user. If you rewire, edit `EPD_DC_PIN` / `EPD_RST_PIN` / `EPD_BUSY_PIN` in the `.c`. |
+| Runs, but the screen never changes | Check 3V3 and GND first, then that MOSI and SCK are not swapped. |
+| Hangs at 100 % CPU, no flashing | BUSY or RST# wire is loose (BUSY idles high, low = busy). |
 
 ## Contributors
 

@@ -1,162 +1,131 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on PANZER-PLUS (i.MX8MP) — Linux
 
-## Hardware Preparison
-
-Based on the PANZER-PLUS hardware design, SPI interface support was not originally included. However, you have three options to use the SPI interface on PANZER-PLUS: <br>
-
-- Manually rework the J6 connector on the PCBA by connecting the wires on both ends of the IC and pulling a 3.3V wire to PIN 1, modifying J6 as shown in the diagram below. <br>
-**Step 1. Remove component U131.** <br>
-**Step 2. Connect pin 26 of the removed component's footprint to pin 40, pin 34 to pin 20, pin 33 to pin 21, and pin 25 to pin 5.** <br>
-**Step 3. Connect a 3.3V power source to pin 1 of JP2.** <br>
-
-- Purchase reworked hardware directly from us.
-- Use an external USB-to-SPI dongle.
-
-Next, connect the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
-
-The PANZER-PLUS PCBA can be connected as follows JP2 & JP3 mapping:
-
-JP2
-
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/71635dcf-4b94-4d5e-baf8-407a651f8522" />
-
-
-
-JP3 (EXT_GPIO8=DC#, EXT_GPIO6=RST#, EXT_GPIO4=BUSY)
-
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/f09e56f8-b345-4170-80c7-c78225073435" />
-
-## Driver Installation instructions
-
-|Kernel|Tested|
+| Item | Value |
 |---|---|
-| 6.6 |&#10004;|
-| 5.15 |&#10004;|
+| Board | PANZER-PLUS (NXP i.MX8MP, device tree `imx8mp-b643-ppc.dts`) |
+| Tested | kernel 5.15, 6.6 |
+| Interface | `/dev/spidev1.0` + 3 GPIOs on `gpiochip5` |
+| Demo source | [pixpaper-213-c-test-imx8mp.c](https://github.com/open-ep/linux-user-space-examples/blob/master/2.13/color/spi/pixpaper-213-c-test-imx8mp.c) |
 
-Step 1. Download the kernel source and modify the target device tree file: imx8mp-b643-ppc.dts <br>
-Step 2. Merge the patch as follows modification, a quick way is download these code as a patch, then use git apply into the kernel source.<br>
+## 0. Hardware rework (one-time)
+
+The stock PANZER-PLUS routes these pins to a UART, not SPI. Pick one:
+
+- **Rework the board yourself:**
+  1. Remove **U131**.
+  2. On the empty U131 footprint, solder a wire across each pair: pad 26 ↔ pad 40, pad 34 ↔ pad 20, pad 33 ↔ pad 21, pad 25 ↔ pad 5.
+  3. Solder a 3.3 V wire to **JP2 pin 1** (it is not connected from the factory).
+- Ask Open-EP for a reworked board.
+- Or use a USB-to-SPI dongle instead (not covered here).
+
+## 1. Wiring
+
+Power the board off before wiring. The panel is **3.3 V only** — never use a 5 V pin.
+
+<img src="images/wiring/panzer-plus.svg" width="640" alt="PANZER-PLUS (i.MX8MP) wiring">
+
+| Panel | Header pin | Signal |
+|---|---|---|
+| 3V3 | JP2-1 (rework wire) | 3.3 V |
+| GND | JP2-6 | GND |
+| MOSI | JP2-4 | ECSPI1 MOSI |
+| SCK | JP2-2 | ECSPI1 SCLK |
+| CS# | JP2-3 | GPIO5_IO09 |
+| DC# | JP3-8 | EXT_GPIO8 = PCA9555 line 15 |
+| RST# | JP3-6 | EXT_GPIO6 = PCA9555 line 13 |
+| BUSY | JP3-4 | EXT_GPIO4 = PCA9555 line 11 |
+
+## 2. Enable SPI
+
+Switch ECSPI1's pins from UART3 to SPI in `arch/arm64/boot/dts/freescale/imx8mp-b643-ppc.dts`:
+
+1. Rename the existing `&ecspi2` node to `&ecspi1` and change its pins / chip-select:
 
 ```diff
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-b643-ppc.dts b/arch/arm64/boot/dts/freescale/imx8mp-b643-ppc.dts
-index 0079ffc2501b..dd6fb8cdb8ba 100755
---- a/arch/arm64/boot/dts/freescale/imx8mp-b643-ppc.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-b643-ppc.dts
-@@ -198,13 +198,13 @@ lte_reset {
-        };
- };
-
 -&ecspi2 {
 +&ecspi1 {
-        #address-cells = <1>;
-        #size-cells = <0>;
--       fsl,spi-num-chipselects = <1>;
-+       num-cs = <1>;
-        pinctrl-names = "default";
--       pinctrl-0 = <&pinctrl_ecspi2 &pinctrl_ecspi2_cs>;
--       cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
-+       pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
-+       cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
-        status = "okay";
-
-        spidev1: spi@0 {
-@@ -616,15 +616,6 @@ &uart2 {
-        status = "okay";
- };
-
--&uart3 {
--       pinctrl-names = "default";
--       pinctrl-0 = <&pinctrl_uart3>;
--       assigned-clocks = <&clk IMX8MP_CLK_UART3>;
--       assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
--       fsl,uart-has-rtscts;
--       status = "okay";
--};
--
- &usb3_phy0 {
-        status = "okay";
- };
-@@ -950,12 +941,17 @@ MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX      0x49
-                >;
-        };
-
--       pinctrl_uart3: uart3grp {
-+       pinctrl_ecspi1: ecspi1grp {
-                fsl,pins = <
--                       MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX          0x140
--                       MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX          0x140
--                       MX8MP_IOMUXC_ECSPI1_SS0__UART3_DCE_RTS          0x140
--                       MX8MP_IOMUXC_ECSPI1_MISO__UART3_DCE_CTS         0x140
-+                       MX8MP_IOMUXC_ECSPI1_SCLK__ECSPI1_SCLK           0x140
-+                       MX8MP_IOMUXC_ECSPI1_MOSI__ECSPI1_MOSI           0x140
-+                       MX8MP_IOMUXC_ECSPI1_MISO__ECSPI1_MISO           0x140
-+               >;
-+       };
-+
-+       pinctrl_ecspi1_cs: ecspi1cs {
-+               fsl,pins = <
-+                       MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09                     0x140
-                >;
-        };
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+-	fsl,spi-num-chipselects = <1>;
++	num-cs = <1>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi2 &pinctrl_ecspi2_cs>;
+-	cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
++	pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
++	cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
 ```
 
-Step 3. Recompile the kernel and copy the new dtb file to the boot partition instead of the old one. <br>
-Step 4. Boot up the system and checking the device node is exist or not <br>
+2. Delete the whole `&uart3 { ... };` node.
 
-    ls /dev/spidev1.0
-    
+3. In `&iomuxc`, replace the `pinctrl_uart3: uart3grp { ... };` group with:
 
-## User-Space Utility instructions (Linux OS)
+```dts
+	pinctrl_ecspi1: ecspi1grp {
+		fsl,pins = <
+			MX8MP_IOMUXC_ECSPI1_SCLK__ECSPI1_SCLK		0x140
+			MX8MP_IOMUXC_ECSPI1_MOSI__ECSPI1_MOSI		0x140
+			MX8MP_IOMUXC_ECSPI1_MISO__ECSPI1_MISO		0x140
+		>;
+	};
 
-Step 1. Install necessary packages
+	pinctrl_ecspi1_cs: ecspi1cs {
+		fsl,pins = <
+			MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09		0x140
+		>;
+	};
+```
 
-        Ubuntu/Debian:
-        $ sudo apt install gpiod libgpiod-dev
+4. Rebuild the dtb, copy it over the old one in the boot partition, reboot.
 
-        Yocto:
-        Need add the line in machine conf file as following:
-        IMAGE_INSTALL_append = " libgpiod"
+**Check:** `ls /dev/spidev1.0` prints `/dev/spidev1.0`.
 
-Step 2. Prepare a 250x122 size picture what you want to showing, then make a image raw data based header file
+## 3. Build and run the demo
 
-        Download the PNG to RAW converter base on python3, remember to install opencv package first
-        $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
+> Needs **libgpiod 1.x** — check with `gpioinfo --version` (must say `v1.x`). With libgpiod 2.x the build fails — see Troubleshooting.
 
-        Then, rename your PNG file as test.png, and excute the python script
-        $ python3 png2epd.py
+> Yocto image: add `IMAGE_INSTALL:append = " libgpiod libgpiod-dev libgpiod-tools packagegroup-core-buildessential"` to `conf/local.conf`, rebuild, then run the commands below on the board (skip the `apt` line).
 
-        It will generate a output file: png_HEX.h, the copy the same folder witth pixpaper-213-c-test-imx8mp.c.
-        Note that this step can running on host PC side or target board, but png_HEX.h must be put into the folder with c file together before 
-        compiling.
+```bash
+sudo apt install -y gcc wget gpiod libgpiod-dev
+mkdir -p ~/pixpaper-213c && cd ~/pixpaper-213c
+BASE=https://raw.githubusercontent.com/open-ep/linux-user-space-examples/master/2.13/color/spi
+wget $BASE/pixpaper-213-c-test-imx8mp.c $BASE/png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-imx8mp.c -lgpiod
+sudo ./epd_test
+```
 
-        Download a sample header file:
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
+## 4. Expected result
 
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image (progress bars on a black background). The demo redraws every 30 s until you press **Ctrl+C**.
 
-Step 3. Please download the utility source code in the rootfs of PANZER-PLUS, then compile it and execute the compiled executable file.
+<img width="640" alt="result" src="https://github.com/user-attachments/assets/224ee0a3-6eda-4a69-8ffe-28d9f717d7a8" />
 
-        PIXPAPER-213-C:
-        # wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-imx8mp.c
-        # gcc -o epd_test pixpaper-213-c-test-imx8mp.c -lgpiod
-        # ./epd_test
+## 5. Show your own picture
 
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN,
-        please modify the specific macros definition of pixpaper-213-c-test-imx8mp.c:
+```bash
+sudo apt install -y python3-opencv
+wget $BASE/png2epd.py
+# save your picture as test.png: exactly 250 × 122 px (landscape)
+python3 png2epd.py                    # test.png → png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-imx8mp.c -lgpiod && sudo ./epd_test
+```
 
-        #define EPD_GPIO_CHIP "gpiochip5"
-        #define EPD_DC_PIN 15
-        #define EPD_RST_PIN 13
-        #define EPD_BUSY_PIN 11
+`png2epd.py` does **not** resize or dither. It keeps only 3 exact colours — black `#000000`, red `#FF0000`, yellow `#FFFF00`; every other colour becomes white. It can also run on your PC; just copy `png_HEX.h` to the board.
 
+## Troubleshooting
 
-Expection results: <br>
-final image is some procgress bar with black background <br>
-![ezgif-4-6446ab9a4e](https://github.com/user-attachments/assets/224ee0a3-6eda-4a69-8ffe-28d9f717d7a8)
-
+| Symptom | Fix |
+|---|---|
+| `/dev/spidev1.0` missing | SPI is not enabled → redo step 2 and reboot. |
+| `gpiochip5` not found / wrong lines | DC/RST/BUSY are on the PCA9555 expander; its gpiochip number depends on probe order. Run `gpiofind EXT_GPIO8` — it prints e.g. `gpiochip5 15`. Put that chip name in `EPD_GPIO_CHIP`. |
+| `/dev/spidev1.0` missing but another `spidevN.0` exists | Bus numbering differs on your kernel. Put the name you see in `EPD_SPI_DEVICE` in the `.c`. |
+| Compile error `implicit declaration of function 'gpiod_chip_open_by_name'` | Your OS has libgpiod 2.x. Use an image with libgpiod 1.x. |
+| `Failed to request GPIO` / line busy | Another driver owns PCA9555 lines 11/13/15. `gpioinfo gpiochip5` shows the user. If you rewire, edit `EPD_DC_PIN` / `EPD_RST_PIN` / `EPD_BUSY_PIN` in the `.c`. |
+| Runs, but the screen never changes | Check 3V3 and GND first, then that MOSI and SCK are not swapped. |
+| Hangs at 100 % CPU, no flashing | BUSY or RST# wire is loose (BUSY idles high, low = busy). |
 
 ## Contributors
 

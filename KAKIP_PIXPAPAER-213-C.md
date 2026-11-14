@@ -1,130 +1,100 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Overview
+# PIXPAPER-213-C on Kakip (RZ/V2H) — Linux
 
-## Hardware Preparison
-
-Because [Kakip AI-Single Board Computer](https://www.kakip.ai/) has a 40-PIN pin header and compatible with Raspberry PI, so it has one SPI interface can be used.
-
-Firstly, connecting the PIXPAPER-213-C's connector to the programming cable we've provided. Connect the other end of the cable to the corresponding pins, matching the colors as defined.
-
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/278a84f1-97a0-4ab5-ac1d-c94a1133bda3" />
-
-Then, connect to the Kakip specific PINs of 40-PIN header as follows:
-
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/ce62169e-d735-4844-bd55-967721785646" />
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/051eab7c-4836-4256-8eaf-bb09fbef7d93" />
-
-
-## Driver Installation instructions
-
-|Kernel|Tested|
+| Item | Value |
 |---|---|
-| 6.1 | &#x23F3;|
-| 5.10 |&#10004;|
+| Board | [Kakip AI SBC (Renesas RZ/V2H)](https://www.kakip.ai/) |
+| Tested | kernel 5.10 (6.1: not tested yet) |
+| Interface | `/dev/spidev0.0` + 3 GPIOs on `gpiochip0` |
+| Demo source | [pixpaper-213-c-test-kakip.c](https://github.com/open-ep/linux-user-space-examples/blob/master/2.13/color/spi/pixpaper-213-c-test-kakip.c) |
 
-Note that if your target OS is Ubuntu image revision V8 and above, it has device tree overlay function inside the image, no need modify any source code, please follows from Step 1-1.<br>
-And if your target OS is Ubuntu image is lower revision, please it has to tweaked device tree file, follows from Step 2-1.
+## 1. Wiring
 
-Step 1-1. **Device tree overlay method will be updated soon**
+Power the board off before wiring. The panel is **3.3 V only** — never use a 5 V pin.
 
-Step 2-1. Merge the patch as follows modification, a quick way is download these code as a patch, then use git apply into the kernel source.
+<img src="images/wiring/kakip.svg" width="640" alt="Kakip (RZ/V2H) wiring">
 
-```diff
-diff --git a/arch/arm64/boot/dts/renesas/kakip-es1.dts b/arch/arm64/boot/dts/renesas/kakip-es1.dts
-index 91555f3c3..09ea2bd0a 100644
---- a/arch/arm64/boot/dts/renesas/kakip-es1.dts
-+++ b/arch/arm64/boot/dts/renesas/kakip-es1.dts
-@@ -292,13 +292,12 @@ usb21_pins: usb21 {
+| Panel | CN6 pin | SoC signal |
+|---|---|---|
+| 3V3 | 1 | 3.3 V |
+| GND | 9 (any GND) | GND |
+| MOSI | 19 | P9_0 / RSPI0 MOSI |
+| SCK | 23 | P9_2 / RSPI0 RSPCK |
+| CS# | 24 | P9_3 / RSPI0 SSL0 |
+| DC# | 29 | P7_4 (gpio line 60) |
+| RST# | 31 | P10_7 (gpio line 87) |
+| BUSY | 37 | P11_3 (gpio line 91) |
 
-        spi0_pins: spi0 {
-                pinmux = <RZG2L_PORT_PINMUX(9, 1, 1)>, /* MISO */
--                        <RZG2L_PORT_PINMUX(9, 0, 1)>, /* MOSI */
--                        <RZG2L_PORT_PINMUX(9, 3, 1)>, /* SSL0 */
--                        <RZG2L_PORT_PINMUX(9, 4, 1)>, /* SSL0 */
--                        <RZG2L_PORT_PINMUX(9, 2, 1)>; /* RSPCK */
-+                       <RZG2L_PORT_PINMUX(9, 0, 1)>, /* MOSI */
-+                       <RZG2L_PORT_PINMUX(9, 2, 1)>, /* SSL0 */
-+                       <RZG2L_PORT_PINMUX(9, 3, 1)>, /* SSL0 */
-+                       <RZG2L_PORT_PINMUX(9, 4, 1)>; /* RSPCK */
-        };
- };
--
- &extal_clk {
-        clock-frequency = <24000000>;
- };
-@@ -1349,6 +1348,14 @@ &spi0 {
-        pinctrl-names = "default";
+<details><summary>Photo of a finished setup</summary>
 
-        status = "okay";
-+
-+    spi_dev0: spi@0 {
-+        compatible = "rohm,dh2228fv";
-+        pl022,com-mode = <1>;
-+        spi-max-frequency = <10000000>;
-+        reg = <0>;
-+        status = "okay";
-+    };
- };
+<img width="640" alt="photo" src="https://github.com/user-attachments/assets/051eab7c-4836-4256-8eaf-bb09fbef7d93" />
+</details>
+
+## 2. Enable SPI
+
+The stock device tree enables `&spi0` (RSPI0, pins P9_0–P9_3) but has no device on it.
+Add a `spidev` child node, rebuild the dtb, and boot with it.
+
+1. In the kernel source, open `arch/arm64/boot/dts/renesas/kakip-es1.dts`, find the existing `&spi0 { ... };` node, and add the `spi@0` block inside it:
+
+```dts
+&spi0 {
+	/* ...keep the existing lines... */
+	status = "okay";
+
+	spi_dev0: spi@0 {			/* add this block */
+		compatible = "rohm,dh2228fv";	/* any spidev-bound compatible */
+		reg = <0>;
+		spi-max-frequency = <10000000>;
+	};
+};
 ```
 
-Step 2-2. Recompile the kernel and copy the new dtb file to the /boot folder of  rootfs partition instead of the old one. <br>
-Step 2-3. Boot up the system and checking the device node is exist or not <br>
+2. Rebuild the dtb (`make dtbs`), copy `kakip-es1.dtb` over the one in `/boot` on the rootfs, reboot.
 
-    ls /dev/spidev0.0
- 
+**Check:** `ls /dev/spidev0.0` prints `/dev/spidev0.0`.
 
-## User-Space Utility instructions (Linux OS)
+## 3. Build and run the demo
 
-Step 1. Install necessary packages
+> Needs **libgpiod 1.x** — check with `gpioinfo --version` (must say `v1.x`). With libgpiod 2.x the build fails — see Troubleshooting.
 
-        Ubuntu/Debian:
-        $ sudo apt install gpiod libgpiod-dev
+```bash
+sudo apt install -y gcc wget gpiod libgpiod-dev
+mkdir -p ~/pixpaper-213c && cd ~/pixpaper-213c
+BASE=https://raw.githubusercontent.com/open-ep/linux-user-space-examples/master/2.13/color/spi
+wget $BASE/pixpaper-213-c-test-kakip.c $BASE/png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-kakip.c -lgpiod
+sudo ./epd_test
+```
 
-        Yocto:
-        Need add the line in machine conf file as following:
-        IMAGE_INSTALL_append = " libgpiod"
+## 4. Expected result
 
-
-Step 2. Prepare a 250x122 size picture what you want to showing, then make a image raw data based header file
-
-        Download the PNG to RAW converter base on python3, remember to install opencv package first
-        $ sudo apt install python3-opencv
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png2epd.py
-
-        Then, rename your PNG file as test.png, and excute the python script
-        $ python3 png2epd.py
-
-        It will generate a output file: png_HEX.h, the copy the same folder witth pixpaper-213-c-test-kakip.c.
-        Note that this step can running on host PC side or target board, but png_HEX.h must be put into the folder with c file together before 
-        compiling.
-
-        Download a sample header file:
-        $ wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/png_HEX.h
-
-
-Step 3. Please download the utility source code in the rootfs of KAKIP SBC, then compile it and execute the compiled executable file.
-
-        PIXPAPER-213-C:
-        # wget https://raw.githubusercontent.com/open-ep/linux-user-space-examples/refs/heads/master/2.13/color/spi/pixpaper-213-c-test-kakip.c
-        # gcc -o epd_test pixpaper-213-c-test-kakip.c -lgpiod
-        # ./epd_test
-
-        Note that if your wired connection is different with chapter 1 "Hardware Preparison", especially DC# PIN, RST# PIN, and BUSY PIN, also can issue command 'gpioinfo' to check the gpip pin detail. 
-        Please modify the specific macros definition of pixpaper-213-c-test-kakip.c:
-
-        #define EPD_GPIO_CHIP "gpiochip0"
-        #define EPD_DC_PIN 60
-        #define EPD_RST_PIN 87
-        #define EPD_BUSY_PIN 91
-
-
-Expection results: <br>
+The panel flashes for **15–25 s** (normal for a 4-colour full refresh), then shows the sample image. The demo redraws every 30 s until you press **Ctrl+C**.
 
 https://github.com/user-attachments/assets/9bc75d90-b77c-44e8-84ba-26e8f9112780
 
+## 5. Show your own picture
 
+```bash
+sudo apt install -y python3-opencv
+wget $BASE/png2epd.py
+# save your picture as test.png: exactly 250 × 122 px (landscape)
+python3 png2epd.py                    # test.png → png_HEX.h
+gcc -o epd_test pixpaper-213-c-test-kakip.c -lgpiod && sudo ./epd_test
+```
 
+`png2epd.py` does **not** resize or dither. It keeps only 3 exact colours — black `#000000`, red `#FF0000`, yellow `#FFFF00`; every other colour becomes white. It can also run on your PC; just copy `png_HEX.h` to the board.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `/dev/spidev0.0` missing | SPI is not enabled → redo step 2 and reboot. |
+| Compile error `implicit declaration of function 'gpiod_chip_open_by_name'` | Your OS has libgpiod 2.x. Use an image with libgpiod 1.x. |
+| `Failed to request GPIO` / line busy | Another driver owns P7_4/P10_7/P11_3. `gpioinfo gpiochip0` shows the user. If you rewire, edit `EPD_DC_PIN` / `EPD_RST_PIN` / `EPD_BUSY_PIN` in the `.c`. |
+| Runs, but the screen never changes | Check 3V3 and GND first, then that MOSI and SCK are not swapped. |
+| Hangs at 100 % CPU, no flashing | BUSY or RST# wire is loose (BUSY idles high, low = busy). |
 
 ## Contributors
 
