@@ -82,12 +82,21 @@ def svg_board(title, headers):
         out.append(f'<rect x="{x0+i*bw+2}" y="{y}" width="{bw-4}" height="28" rx="4" fill="{SIG[s]}"/>'
                    f'<text x="{x0+i*bw+bw/2}" y="{y+19}" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff" {FONT}>{s}</text>')
     y += 60
-    cx_l, cx_r = W / 2 - 18, W / 2 + 18
     for name, rows, pins in headers:
+        # Pico-style module: pads on the two long edges of the board, USB on top
+        edge = rows == pico()
+        cx_l, cx_r = (W / 2 - 80, W / 2 + 80) if edge else (W / 2 - 18, W / 2 + 18)
         out.append(f'<text x="{W/2}" y="{y}" text-anchor="middle" font-size="16" font-weight="bold" {FONT}>{name}</text>')
         y += 14
+        if edge:
+            out.append(f'<rect x="{W/2-34}" y="{y}" width="68" height="30" rx="5" fill="#c9c9c9" stroke="#777"/>'
+                       f'<text x="{W/2}" y="{y+20}" text-anchor="middle" font-size="13" font-weight="bold" fill="#333" {FONT}>USB</text>')
+            y += 22
         top = y
-        out.append(f'<rect x="{cx_l-16}" y="{top}" width="{cx_r-cx_l+32}" height="{len(rows)*ROW+8}" rx="6" fill="#f2f2f2" stroke="#999"/>')
+        if edge:
+            out.append(f'<rect x="{cx_l-14}" y="{top}" width="{cx_r-cx_l+28}" height="{len(rows)*ROW+8}" rx="10" fill="#e3efe3" stroke="#6a9a6a" stroke-width="2"/>')
+        else:
+            out.append(f'<rect x="{cx_l-16}" y="{top}" width="{cx_r-cx_l+32}" height="{len(rows)*ROW+8}" rx="6" fill="#f2f2f2" stroke="#999"/>')
         for r, (lp, rp) in enumerate(rows):
             cy = top + 4 + ROW / 2 + r * ROW
             for p, cx, side in ((lp, cx_l, -1), (rp, cx_r, 1)):
@@ -97,11 +106,11 @@ def svg_board(title, headers):
                     out.append(f'<rect x="{cx-PIN_R}" y="{cy-PIN_R}" width="{2*PIN_R}" height="{2*PIN_R}" fill="{fill}" stroke="#333"/>')
                 else:
                     out.append(f'<circle cx="{cx}" cy="{cy}" r="{PIN_R}" fill="{fill}" stroke="#333"/>')
-                nx = cx + side * 30
+                nx = cx - side * 16 if edge else cx + side * 30   # edge boards: number inside the board
                 anchor = "end" if side < 0 else "start"
                 if used:
                     sig, note = used
-                    lx = cx + side * 62
+                    lx = cx + side * (30 if edge else 62)
                     lw = 250
                     rx = lx - lw if side < 0 else lx
                     out.append(f'<line x1="{cx+side*PIN_R}" y1="{cy}" x2="{lx}" y2="{cy}" stroke="{SIG[sig]}" stroke-width="3"/>')
@@ -111,10 +120,11 @@ def svg_board(title, headers):
                     out.append(f'<text x="{tx}" y="{cy+5}" text-anchor="{anchor}" font-size="13" font-weight="bold" fill="#fff" {FONT}>{label}</text>')
                 # pin number on a white chip so the wire doesn't cross it
                 bx = nx - 22 if side < 0 else nx - 2
-                if used:
+                if used and not edge:
                     out.append(f'<rect x="{bx}" y="{cy-9}" width="24" height="18" fill="#fff"/>')
                 weight, colr = ("bold", "#000") if used else ("normal", "#888")
-                out.append(f'<text x="{nx}" y="{cy+5}" text-anchor="{anchor}" font-size="13" font-weight="{weight}" fill="{colr}" {FONT}>{p}</text>')
+                nanchor = ("start" if side < 0 else "end") if edge else anchor
+                out.append(f'<text x="{nx}" y="{cy+5}" text-anchor="{nanchor}" font-size="13" font-weight="{weight}" fill="{colr}" {FONT}>{p}</text>')
         y = top + len(rows) * ROW + 44
     out.append(f'<text x="{W/2}" y="{y-14}" text-anchor="middle" font-size="12" fill="#555" {FONT}>'
                '■ = pin 1.  Only the coloured pins are used. Panel is 3.3 V only — never connect it to 5 V.</text>')
