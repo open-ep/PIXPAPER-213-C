@@ -4,7 +4,7 @@
 
 | Item | Value |
 |---|---|
-| Board | [WIZnet W6300-EVB-Pico2](https://docs.wiznet.io/Product/iEthernet/W6300/w6300-evb-pico2) (`w6300_evb_pico2/rp2350a/m33`) or Raspberry Pi Pico 2 (`rpi_pico2/rp2350a/m33`) |
+| Board | [WIZnet W6300-EVB-Pico2](https://docs.wiznet.io/Product/Chip/Ethernet/W6300/w6300-evb-pico2) (`w6300_evb_pico2/rp2350a/m33`) or Raspberry Pi Pico 2 (`rpi_pico2/rp2350a/m33`) |
 | Host | Ubuntu (x86-64) |
 | Zephyr | upstream board support, Zephyr SDK ≥ 1.0 |
 | Source | [zephyr-user-space-examples → w6300_evb_pico2/samples/pixpaper_213c](https://github.com/open-ep/zephyr-user-space-examples/tree/main/boards/w6300_evb_pico2/samples/pixpaper_213c) |
